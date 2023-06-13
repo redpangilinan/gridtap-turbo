@@ -35,7 +35,7 @@ const Game = () => {
   const closeModal = () => {
     setModalOpen(false);
 
-    // Restart stats
+    // Restart game
     setScore(0);
     setHits(0);
     setMiss(0);
@@ -44,6 +44,7 @@ const Game = () => {
     setMaxCombo(0);
     setMultiPts(4);
     setTimer(30);
+    setBlackSquareIndices(generateUniqueIndices());
   };
 
   // Update accuracy whenever hits or miss change
