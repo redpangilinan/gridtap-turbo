@@ -8,8 +8,9 @@ type TileProps = {
 
 const Tiles: React.FC<TileProps> = ({ isBlack, onClick }) => {
   const [isClicked, setIsClicked] = useState(false);
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
-  const handleMouseDown = () => {
+  const handleClick = () => {
     if (!isBlack) {
       setIsClicked(true);
       setTimeout(() => {
@@ -22,13 +23,25 @@ const Tiles: React.FC<TileProps> = ({ isBlack, onClick }) => {
     }
   };
 
+  if (isMobile) {
+    return (
+      <div
+        className={`relative ${
+          isBlack ? 'bg-black' : isClicked ? 'bg-red-500' : 'bg-white'
+        } w-24 h-24 md:w-32 md:h-32 flex items-center justify-center cursor-pointer select-none border duration-100`}
+        onTouchStart={handleClick}
+      >
+        <div className='absolute w-full h-full bg-white rounded-full opacity-0 pointer-events-none'></div>
+      </div>
+    );
+  }
+
   return (
     <div
       className={`relative ${
         isBlack ? 'bg-black' : isClicked ? 'bg-red-500' : 'bg-white'
       } w-24 h-24 md:w-32 md:h-32 flex items-center justify-center cursor-pointer select-none border duration-100`}
-      onMouseDown={handleMouseDown}
-      onTouchStart={handleMouseDown}
+      onMouseDown={handleClick}
     >
       <div className='absolute w-full h-full bg-white rounded-full opacity-0 pointer-events-none'></div>
     </div>
