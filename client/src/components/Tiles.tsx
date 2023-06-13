@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 type TileProps = {
   isBlack: boolean;
+  isSelected: boolean;
   onClick?: () => void;
 };
 
@@ -27,6 +28,7 @@ const Tiles: React.FC<TileProps> = ({ isBlack, onClick }) => {
         isBlack ? 'bg-black' : isClicked ? 'bg-red-500' : 'bg-white'
       } w-24 h-24 md:w-32 md:h-32 flex items-center justify-center cursor-pointer select-none border duration-100`}
       onMouseDown={handleMouseDown}
+      onTouchStart={handleMouseDown}
     >
       <div className='absolute w-full h-full bg-white rounded-full opacity-0 pointer-events-none'></div>
     </div>
