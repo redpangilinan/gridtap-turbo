@@ -8,7 +8,7 @@ function App() {
   return (
     <div className='flex flex-col min-h-screen bg-gray-800 text-gray-300'>
       <Helmet>
-        <title>GridTap Turbo</title>
+        <title>Gridtap Turbo</title>
         <meta
           name='description'
           content='Tap fast and climb the leaderboards in GridTap Turbo, a fast-paced grid-tapping challenge.'

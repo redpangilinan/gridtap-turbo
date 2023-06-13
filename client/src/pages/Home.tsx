@@ -4,9 +4,9 @@ import Button from '../components/Button';
 const Home = () => {
   return (
     <div className='flex flex-grow flex-col justify-center items-center gap-5 container mx-auto px-2'>
-      <h1 className='text-5xl font-extrabold'>GridTap Turbo</h1>
+      <h1 className='text-5xl font-extrabold'>Gridtap Turbo</h1>
       <h2 className='text-xl font-medium text-center'>
-        Tap fast and climb the leaderboards in GridTap Turbo, a fast-paced
+        Tap fast and climb the leaderboards in Gridtap Turbo, a fast-paced
         grid-tapping challenge.
       </h2>
       <Link to={`/play`}>
