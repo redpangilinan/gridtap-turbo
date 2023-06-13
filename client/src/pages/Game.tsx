@@ -124,7 +124,6 @@ const Game = () => {
       setScore((prevScore) => prevScore + multiplier);
     } else {
       setMiss((prevMiss) => prevMiss + 1);
-      setTimer((prevTimer) => prevTimer - 1);
       setCombo(0);
       setMultiPts(4);
     }
