@@ -1,0 +1,6 @@
+{
+	"dependencies": {
+		"@types/react-helmet": "^6.1.6",
+		"react-helmet": "^6.1.0"
+	}
+}
