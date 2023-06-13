@@ -62,7 +62,7 @@ const Navbar = () => {
               <li className='text-gray-300 hover:text-blue-300'>
                 <a href='/rankings'>Rankings</a>
               </li>
-              <li className='text-gray-300 hover:text-blue-300 font-bold'>
+              <li className='text-gray-300 hover:text-blue-300'>
                 <a href='/play'>Play</a>
               </li>
             </ul>
