@@ -11,7 +11,6 @@ CREATE TABLE tb_users (
   username VARCHAR(50) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
   email VARCHAR(64) UNIQUE,
-  plays INTEGER DEFAULT 0,
   scores INTEGER DEFAULT 0,
   user_type user_type_enum DEFAULT 'user',
   user_status user_status_enum DEFAULT 'active',
@@ -32,3 +31,16 @@ CREATE TRIGGER update_updated_trigger
   BEFORE UPDATE ON tb_users
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at();
+
+-- Scores table
+CREATE TABLE tb_scores (
+    score_id SERIAL PRIMARY KEY,
+    user_id INT,
+    score INT,
+    hits INT,
+    miss INT,
+    accuracy NUMERIC(5, 2),
+    max_combo INT,
+    submitted_at TIMESTAMPTZ DEFAULT NOW(),
+    FOREIGN KEY (user_id) REFERENCES tb_users(user_id)
+);
