@@ -22,8 +22,7 @@ const Rankings: React.FC = () => {
         await new Promise((resolve) => setTimeout(resolve, 350));
 
         const apiUrl = `${import.meta.env.VITE_BASE_URL}/users`;
-        console.log(apiUrl);
-        const response = await axios.get('http://localhost:3001/users');
+        const response = await axios.get(apiUrl);
 
         setUserData(response.data);
         setIsLoading(false);
