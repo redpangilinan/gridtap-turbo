@@ -20,6 +20,9 @@ dependencies:
   express:
     specifier: ^4.18.2
     version: 4.18.2
+  express-rate-limit:
+    specifier: ^6.7.0
+    version: 6.7.0(express@4.18.2)
   jsonwebtoken:
     specifier: ^9.0.0
     version: 9.0.0
@@ -407,6 +410,15 @@ packages:
   /etag@1.8.1:
     resolution: {integrity: sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg==}
     engines: {node: '>= 0.6'}
+    dev: false
+
+  /express-rate-limit@6.7.0(express@4.18.2):
+    resolution: {integrity: sha512-vhwIdRoqcYB/72TK3tRZI+0ttS8Ytrk24GfmsxDXK9o9IhHNO5bXRiXQSExPQ4GbaE5tvIS7j1SGrxsuWs+sGA==}
+    engines: {node: '>= 12.9.0'}
+    peerDependencies:
+      express: ^4 || ^5
+    dependencies:
+      express: 4.18.2
     dev: false
 
   /express@4.18.2:
