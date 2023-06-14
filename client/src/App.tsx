@@ -2,11 +2,12 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import Home from './pages/Home';
 import Game from './pages/Game';
+import Rankings from './pages/Rankings';
 import Navbar from './components/Navbar';
 
 function App() {
   return (
-    <div className='flex flex-col min-h-screen bg-gray-800 text-gray-300'>
+    <div className='flex flex-col min-h-screen bg-gray-900 text-gray-300'>
       <Helmet>
         <title>Gridtap Turbo</title>
         <meta
@@ -38,6 +39,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Home />} />
+          <Route path='/rankings' element={<Rankings />} />
           <Route path='/play' element={<Game />} />
         </Routes>
       </BrowserRouter>
