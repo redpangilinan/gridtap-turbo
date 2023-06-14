@@ -3,7 +3,7 @@ import cors from 'cors';
 import { pool } from '../db';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { validateToken } from '../middleware/validateToken';
+import validateToken from '../middleware/validateToken';
 
 const app = express.Router();
 

@@ -24,4 +24,4 @@ function validateToken(userType) {
   };
 }
 
-export { validateToken };
+export default validateToken;
