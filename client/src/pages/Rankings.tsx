@@ -21,7 +21,7 @@ const Rankings: React.FC = () => {
       try {
         await new Promise((resolve) => setTimeout(resolve, 350));
 
-        const apiUrl = `http://localhost:3001/users`;
+        const apiUrl = `${import.meta.env.REACT_APP_BASE_URL}/users`;
         const response = await axios.get(apiUrl);
 
         setUserData(response.data);
