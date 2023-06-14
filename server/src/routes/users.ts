@@ -53,7 +53,23 @@ app.get('/', async (req: Request, res: Response) => {
   try {
     const client = await pool.connect();
 
-    const query = `SELECT user_id, username, email, plays, scores FROM tb_users ORDER BY user_id`;
+    const query = `
+      SELECT 
+        u.user_id, 
+        u.username, 
+        u.email, 
+        u.scores, 
+        COALESCE(s.top_score, 0) AS top_score,
+        COALESCE(((top_score * u.scores) / 10000), 0) + 1 AS level,
+        TRUNC(((COALESCE(((top_score::numeric * u.scores) / 10000), 0) + 1) - (COALESCE(((top_score * u.scores) / 10000), 0) + 1))*100::numeric, 2) AS exp_percent
+      FROM tb_users u
+      LEFT JOIN (
+        SELECT user_id, MAX(score) AS top_score
+        FROM tb_scores
+        GROUP BY user_id
+      ) s ON u.user_id = s.user_id
+      ORDER BY top_score DESC, u.created_at`;
+
     const result = await client.query(query);
 
     client.release();
@@ -70,7 +86,22 @@ app.get('/:id', validateToken('any'), async (req: Request, res: Response) => {
     const client = await pool.connect();
 
     const { id } = req.params;
-    const query = `SELECT user_id, username, email, plays, scores FROM tb_users WHERE user_id = $1`;
+    const query = `
+      SELECT 
+        u.user_id, 
+        u.username, 
+        u.email, 
+        u.scores, 
+        COALESCE(s.top_score, 0) AS top_score,
+        COALESCE(((top_score * u.scores) / 10000), 0) + 1 AS level,
+        TRUNC(((COALESCE(((top_score::numeric * u.scores) / 10000), 0) + 1) - (COALESCE(((top_score * u.scores) / 10000), 0) + 1))*100::numeric, 2) AS exp_percent
+      FROM tb_users u
+      LEFT JOIN (
+        SELECT user_id, MAX(score) AS top_score
+        FROM tb_scores
+        GROUP BY user_id
+      ) s ON u.user_id = s.user_id
+      WHERE u.user_id = $1`;
     const values = [id];
     const result = await client.query(query, values);
 
