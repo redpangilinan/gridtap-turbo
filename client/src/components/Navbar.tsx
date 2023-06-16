@@ -51,7 +51,7 @@ const Navbar = () => {
         </div>
         <div>
           <div
-            className={`flex-1 justify-self-center pb-3 mt-3 md:block md:pb-0 md:mt-0 ${
+            className={`flex-1 justify-self-center border-x border-t p-4 rounded-t-md md:block md:p-0 md:mt-0 md:border-none ${
               navbar ? 'block' : 'hidden'
             }`}
           >
@@ -64,6 +64,22 @@ const Navbar = () => {
               </li>
               <li className='text-gray-300 hover:text-blue-300'>
                 <a href='/play'>Play</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div
+            className={`flex-1 justify-self-center border p-4 rounded-b-md md:block md:p-0 md:mt-0 md:border-none ${
+              navbar ? 'block' : 'hidden'
+            }`}
+          >
+            <ul className='items-center justify-center space-y-8 md:flex md:space-x-6 md:space-y-0'>
+              <li className='text-gray-300 hover:text-blue-300'>
+                <a href='/login'>Log in</a>
+              </li>
+              <li className='text-gray-300 hover:text-blue-300 md:hover:text-black md:hover:bg-white md:border md:hover:cursor-pointer md:rounded md:px-2 md:py-1'>
+                <a href='/register'>Register</a>
               </li>
             </ul>
           </div>

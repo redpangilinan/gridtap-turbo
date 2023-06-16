@@ -1,9 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import Navbar from './components/Navbar';
 import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
 import Game from './pages/Game';
 import Rankings from './pages/Rankings';
-import Navbar from './components/Navbar';
 
 function App() {
   return (
@@ -39,6 +41,8 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Home />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/register' element={<Register />} />
           <Route path='/rankings' element={<Rankings />} />
           <Route path='/play' element={<Game />} />
         </Routes>
