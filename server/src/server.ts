@@ -2,6 +2,7 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { config } from 'dotenv';
 import usersRouter from './routes/users';
+import cookiesRouter from './routes/cookies';
 
 config();
 const app = express();
@@ -38,6 +39,7 @@ if (process.env.NODE_ENV === 'production') {
 
 // Routes
 app.use('/users', limiter, usersRouter);
+app.use('/cookies', limiter, cookiesRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
