@@ -1,5 +1,8 @@
 import React from 'react';
+import axios from 'axios';
+axios.defaults.withCredentials = true;
 import { Link } from 'react-router-dom';
+import { logout } from '../service/authService';
 
 type DropdownProps = {
   username: string;
@@ -7,8 +10,8 @@ type DropdownProps = {
 };
 
 const Dropdown: React.FC<DropdownProps> = ({ username, handleClick }) => {
-  const handleLogout = () => {
-    localStorage.removeItem('token');
+  const handleLogout = async () => {
+    logout();
   };
 
   return (

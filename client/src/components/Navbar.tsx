@@ -1,29 +1,35 @@
 import { useState, useEffect } from 'react';
-import jwtDecode, { JwtPayload } from 'jwt-decode';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+axios.defaults.withCredentials = true;
 import Dropdown from './Dropdown';
-
-interface DecodedToken extends JwtPayload {
-  username: string;
-}
 
 const Navbar = () => {
   const [navbar, setNavbar] = useState(false);
   const [username, setUsername] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  // Store username to session storage to minimize API calls
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
+    const fetchUser = async () => {
       try {
-        const decodedToken = jwtDecode<DecodedToken>(token);
-        const { username } = decodedToken;
-        setUsername(username);
+        const storedUser = sessionStorage.getItem('storedName');
+        if (storedUser) {
+          const storedName = JSON.parse(storedUser);
+          setUsername(storedName);
+        } else {
+          const apiUrl = `${import.meta.env.VITE_BASE_URL}/cookies`;
+          const response = await axios.get(apiUrl, { withCredentials: true });
+          const storedName = response.data.username;
+          sessionStorage.setItem('storedName', JSON.stringify(storedName));
+          setUsername(storedName);
+        }
       } catch (error) {
-        console.error('Invalid JWT token:', error);
-        setUsername('');
+        console.log('Not logged in');
       }
-    }
+    };
+
+    fetchUser();
   }, []);
 
   const handleDropdownClick = () => {
@@ -124,7 +130,7 @@ const Navbar = () => {
                   </span>
                   !
                   {dropdownOpen && (
-                    <div className='absolute mt-2'>
+                    <div className='absolute mt-2 z-10'>
                       <Dropdown username={username} handleClick={handleClick} />
                     </div>
                   )}

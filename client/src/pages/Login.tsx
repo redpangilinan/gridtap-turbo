@@ -1,4 +1,8 @@
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { login, validateLogin } from '../service/authService';
+import ErrorMessage from '../components/ErrorMessage';
 
 type Inputs = {
   username: string;
@@ -7,10 +11,21 @@ type Inputs = {
 };
 
 const Login = () => {
-  const { register, handleSubmit, watch } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const { register, handleSubmit } = useForm<Inputs>();
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
-  console.log(watch('username'));
+  useEffect(() => {
+    validateLogin(navigate);
+  }, [navigate]);
+
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    try {
+      await login(data);
+    } catch (error) {
+      setMessage('Your username or password is incorrect!');
+    }
+  };
 
   return (
     <div className='flex justify-center items-center h-full'>
@@ -23,8 +38,12 @@ const Login = () => {
             Login to your account
           </h2>
         </div>
+        {message && (
+          <ErrorMessage data={message} onClose={() => setMessage('')} />
+        )}
         <div className='pb-2'>
           <input
+            {...register('username')}
             className='w-full p-2 md:p-3 text-sm bg-gray-50 focus:outline-none border border-gray-200 rounded text-gray-600'
             type='text'
             placeholder='Username'
@@ -32,6 +51,7 @@ const Login = () => {
         </div>
         <div className='pb-2'>
           <input
+            {...register('password')}
             className='w-full p-2 md:p-3 text-sm bg-gray-50 focus:outline-none border border-gray-200 rounded text-gray-600'
             type='password'
             placeholder='Password'
@@ -44,7 +64,7 @@ const Login = () => {
               aria-describedby='remember'
               type='checkbox'
               className='focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded'
-              {...register('remember', { required: true })}
+              {...register('remember')}
             />
             <label
               htmlFor='remember'
@@ -54,12 +74,12 @@ const Login = () => {
             </label>
           </div>
           <div>
-            <a
+            <Link
+              to='/forgot-password'
               className='text-sm text-blue-600 hover:underline'
-              href='/forgot-password'
             >
               Forgot password?
-            </a>
+            </Link>
           </div>
         </div>
         <div>
@@ -71,9 +91,12 @@ const Login = () => {
         </div>
         <p className='text-sm font-light text-gray-400'>
           Don’t have an account yet?{' '}
-          <a href='/register' className='text-sm text-blue-600 hover:underline'>
+          <Link
+            to='/register'
+            className='text-sm text-blue-600 hover:underline'
+          >
             Register
-          </a>
+          </Link>
         </p>
       </form>
     </div>
