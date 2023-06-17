@@ -4,15 +4,17 @@ import { pool } from '../db';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import validateToken from '../middleware/validateToken';
+import cookieParser from 'cookie-parser';
 
 const app = express.Router();
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: [process.env.DOMAIN], credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 // ===== CRUD =====
-app.post('/', validateToken('admin'), async (req: Request, res: Response) => {
+app.post('/', async (req: Request, res: Response) => {
   try {
     const client = await pool.connect();
 
@@ -162,8 +164,6 @@ app.delete(
   }
 );
 
-export default app;
-
 // ===== Authentication =====
 // User Login
 app.post('/login', async (req, res) => {
@@ -198,9 +198,19 @@ app.post('/login', async (req, res) => {
       }
     );
 
-    res.json({ message: 'Login successful.', token: token });
+    res
+      .status(202)
+      .cookie('token', token, {
+        sameSite: 'strict',
+        path: '/',
+        expires: new Date(new Date().getTime() + 60 * 60 * 1000),
+        httpOnly: true,
+      })
+      .json({ message: 'Login successful.', token: token });
   } catch (err) {
     console.error('Error authenticating user', err);
     res.status(500).json({ error: 'Failed to authenticate user' });
   }
 });
+
+export default app;
