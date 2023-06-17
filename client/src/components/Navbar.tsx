@@ -1,16 +1,48 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import jwtDecode, { JwtPayload } from 'jwt-decode';
+import { Link } from 'react-router-dom';
+import Dropdown from './Dropdown';
+
+interface DecodedToken extends JwtPayload {
+  username: string;
+}
 
 const Navbar = () => {
   const [navbar, setNavbar] = useState(false);
+  const [username, setUsername] = useState('');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decodedToken = jwtDecode<DecodedToken>(token);
+        const { username } = decodedToken;
+        setUsername(username);
+      } catch (error) {
+        console.error('Invalid JWT token:', error);
+        setUsername('');
+      }
+    }
+  }, []);
+
+  const handleDropdownClick = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const handleClick = () => {
+    setDropdownOpen(false);
+    setNavbar(false);
+  };
 
   return (
     <nav className='w-full bg-gray-900'>
       <div className='justify-between px-4 mx-auto lg:max-w-7xl md:items-center md:flex md:px-8'>
         <div>
           <div className='flex items-center justify-between py-3 md:py-5 md:block'>
-            <a href='/'>
+            <Link to='/' onClick={handleClick}>
               <h2 className='text-2xl font-bold'>Gridtap Turbo</h2>
-            </a>
+            </Link>
             <div className='md:hidden'>
               <button
                 className='p-2 text-gray-700 rounded-md outline-none focus:border-gray-400 focus:border'
@@ -57,13 +89,19 @@ const Navbar = () => {
           >
             <ul className='items-center justify-center space-y-8 md:flex md:space-x-6 md:space-y-0'>
               <li className='text-gray-300 hover:text-blue-300'>
-                <a href='/'>Home</a>
+                <Link to='/' onClick={handleClick}>
+                  Home
+                </Link>
               </li>
               <li className='text-gray-300 hover:text-blue-300'>
-                <a href='/rankings'>Rankings</a>
+                <Link to='/rankings' onClick={handleClick}>
+                  Rankings
+                </Link>
               </li>
               <li className='text-gray-300 hover:text-blue-300'>
-                <a href='/play'>Play</a>
+                <Link to='/play' onClick={handleClick}>
+                  Play
+                </Link>
               </li>
             </ul>
           </div>
@@ -74,14 +112,38 @@ const Navbar = () => {
               navbar ? 'block' : 'hidden'
             }`}
           >
-            <ul className='items-center justify-center space-y-8 md:flex md:space-x-6 md:space-y-0'>
-              <li className='text-gray-300 hover:text-blue-300'>
-                <a href='/login'>Log in</a>
-              </li>
-              <li className='text-gray-300 hover:text-blue-300 md:hover:text-black md:hover:bg-white md:border md:hover:cursor-pointer md:rounded md:px-2 md:py-1'>
-                <a href='/register'>Register</a>
-              </li>
-            </ul>
+            {username ? (
+              <ul className='items-center justify-center space-y-8 md:flex md:space-x-6 md:space-y-0 select-none'>
+                <li className='text-gray-300'>
+                  Welcome,{' '}
+                  <span
+                    className='hover:text-blue-300 cursor-pointer'
+                    onClick={handleDropdownClick}
+                  >
+                    {username}
+                  </span>
+                  !
+                  {dropdownOpen && (
+                    <div className='absolute mt-2'>
+                      <Dropdown username={username} handleClick={handleClick} />
+                    </div>
+                  )}
+                </li>
+              </ul>
+            ) : (
+              <ul className='items-center justify-center space-y-8 md:flex md:space-x-6 md:space-y-0'>
+                <li className='text-gray-300 hover:text-blue-300'>
+                  <Link to='/login' onClick={handleClick}>
+                    Log in
+                  </Link>
+                </li>
+                <li className='text-gray-300 hover:text-blue-300 md:hover:text-black md:hover:bg-white md:border md:rounded md:px-2 md:py-1'>
+                  <Link to='/register' onClick={handleClick}>
+                    Register
+                  </Link>
+                </li>
+              </ul>
+            )}
           </div>
         </div>
       </div>
