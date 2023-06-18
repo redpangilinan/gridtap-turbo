@@ -7,13 +7,15 @@ type Inputs = {
   password: string;
 };
 
+// Core user authentication
 export const login = async (data: Inputs) => {
-  await new Promise((resolve) => setTimeout(resolve, 350));
-
   const apiUrl = `${import.meta.env.VITE_BASE_URL}/users/login`;
   await axios.post(apiUrl, data, { withCredentials: true });
+};
 
-  window.location.reload();
+export const signup = async (data: Inputs) => {
+  const apiUrl = `${import.meta.env.VITE_BASE_URL}/users`;
+  await axios.post(apiUrl, data);
 };
 
 export const logout = async () => {
@@ -32,4 +34,12 @@ export const validateLogin = async (navigate: NavigateFunction) => {
   } catch (error) {
     console.log('Not logged in');
   }
+};
+
+// Get cookies for JWT token validation
+export const getCookies = () => {
+  const apiUrl = `${import.meta.env.VITE_BASE_URL}/cookies`;
+  return axios
+    .get(apiUrl, { withCredentials: true })
+    .then((res) => res.data.username);
 };
