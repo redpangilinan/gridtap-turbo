@@ -35,11 +35,3 @@ export const validateLogin = async (navigate: NavigateFunction) => {
     console.log('Not logged in');
   }
 };
-
-// Get cookies for JWT token validation
-export const getCookies = () => {
-  const apiUrl = `${import.meta.env.VITE_BASE_URL}/cookies`;
-  return axios
-    .get(apiUrl, { withCredentials: true })
-    .then((res) => res.data.username);
-};
