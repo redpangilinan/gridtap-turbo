@@ -10,7 +10,7 @@ const Rankings = () => {
   });
 
   return (
-    <div className='flex-grow container mx-auto px-2'>
+    <div className='flex-grow container mx-auto px-2 pb-6'>
       <h1 className='text-xl font-bold my-3'>Rankings</h1>
       {status === 'loading' ? (
         <LoadingTable />
