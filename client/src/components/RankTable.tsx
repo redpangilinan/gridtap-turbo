@@ -15,10 +15,6 @@ type RankTableProps = {
 };
 
 const RankTable: React.FC<RankTableProps> = ({ data }) => {
-  if (data.length === 0) {
-    return <div>Cannot fetch data</div>;
-  }
-
   return (
     <div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
       <table className='w-full text-sm text-left text-gray-400'>

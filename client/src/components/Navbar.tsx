@@ -1,36 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-axios.defaults.withCredentials = true;
+import { useQuery } from '@tanstack/react-query';
+import { getCookies } from '../api/authentication';
 import Dropdown from './Dropdown';
 
 const Navbar = () => {
   const [navbar, setNavbar] = useState(false);
-  const [username, setUsername] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Store username to session storage to minimize API calls
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const storedUser = sessionStorage.getItem('storedName');
-        if (storedUser) {
-          const storedName = JSON.parse(storedUser);
-          setUsername(storedName);
-        } else {
-          const apiUrl = `${import.meta.env.VITE_BASE_URL}/cookies`;
-          const response = await axios.get(apiUrl, { withCredentials: true });
-          const storedName = response.data.username;
-          sessionStorage.setItem('storedName', JSON.stringify(storedName));
-          setUsername(storedName);
-        }
-      } catch (error) {
-        console.log('Not logged in');
-      }
-    };
-
-    fetchUser();
-  }, []);
+  const { data: username } = useQuery({
+    queryKey: ['cookies'],
+    queryFn: getCookies,
+  });
 
   const handleDropdownClick = () => {
     setDropdownOpen(!dropdownOpen);

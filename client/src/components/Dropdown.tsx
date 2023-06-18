@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 import { Link } from 'react-router-dom';
-import { logout } from '../service/authService';
+import { logout } from '../api/authentication';
 
 type DropdownProps = {
   username: string;

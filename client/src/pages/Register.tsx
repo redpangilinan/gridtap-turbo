@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import axios from 'axios';
-import { login, validateLogin } from '../service/authService';
+import { useMutation } from '@tanstack/react-query';
+import { login, signup, validateLogin } from '../api/authentication';
 import ErrorMessage from '../components/ErrorMessage';
 
 type Inputs = {
@@ -22,30 +22,31 @@ const Register = () => {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
+  // Redirect to homepage if user is logged in
   useEffect(() => {
     validateLogin(navigate);
   }, [navigate]);
 
+  // Call login API to login after creating an account
+  const loginUser = useMutation((data: Inputs) => login(data), {
+    onSuccess: () => {
+      window.location.reload();
+    },
+  });
+
+  // Call signup API to create an account
+  const createUser = useMutation((data: Inputs) => signup(data), {
+    onSuccess: (data, variables) => {
+      loginUser.mutate(variables);
+      console.log(data);
+    },
+    onError: () => {
+      setMessage('Username or email is already taken!');
+    },
+  });
+
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 350));
-
-      const apiUrl = `${import.meta.env.VITE_BASE_URL}/users`;
-      const response = await axios.post(apiUrl, data);
-
-      if (response.status === 200) {
-        const loginData = {
-          username: data.username,
-          password: data.password,
-        };
-
-        await login(loginData);
-      } else {
-        setMessage('Failed to create an account');
-      }
-    } catch (error) {
-      setMessage('The username or email is already taken!');
-    }
+    createUser.mutate(data);
   };
 
   // Validate white spaces
@@ -164,7 +165,8 @@ const Register = () => {
           <input
             type='submit'
             className='w-full py-2 md:py-3 bg-blue-600 hover:bg-blue-700 rounded text-sm font-bold cursor-pointer text-gray-50 transition duration-200'
-            value='Register'
+            value={createUser.isLoading ? 'Loading...' : 'Register'}
+            disabled={createUser.isLoading}
           />
         </div>
         <p className='text-sm font-light text-gray-400'>

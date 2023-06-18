@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { login, validateLogin } from '../service/authService';
+import { useMutation } from '@tanstack/react-query';
 import ErrorMessage from '../components/ErrorMessage';
+import { login, validateLogin } from '../api/authentication';
 
 type Inputs = {
   username: string;
@@ -15,16 +16,23 @@ const Login = () => {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
+  // Redirect to homepage if user is logged in
   useEffect(() => {
     validateLogin(navigate);
   }, [navigate]);
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    try {
-      await login(data);
-    } catch (error) {
+  // Call API to login account
+  const loginUser = useMutation((data: Inputs) => login(data), {
+    onSuccess: () => {
+      window.location.reload();
+    },
+    onError: () => {
       setMessage('Your username or password is incorrect!');
-    }
+    },
+  });
+
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    loginUser.mutate(data);
   };
 
   return (
@@ -86,7 +94,8 @@ const Login = () => {
           <input
             type='submit'
             className='w-full py-2 md:py-3 bg-blue-600 hover:bg-blue-700 rounded text-sm font-bold cursor-pointer text-gray-50 transition duration-200'
-            value='Log in'
+            value={loginUser.isLoading ? 'Logging in...' : 'Log in'}
+            disabled={loginUser.isLoading}
           />
         </div>
         <p className='text-sm font-light text-gray-400'>
