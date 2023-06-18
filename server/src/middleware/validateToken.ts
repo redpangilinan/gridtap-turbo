@@ -10,6 +10,7 @@ function validateToken(userType) {
       const token = authHeader.split(' ')[1];
       jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
         if (err) {
+          console.log('Error: ' + err);
           return res.status(401).json({ error: 'Invalid token' });
         }
         if (userType !== 'any' && decoded.userType !== userType) {
@@ -19,6 +20,7 @@ function validateToken(userType) {
         next();
       });
     } else {
+      console.log('No token provided!');
       res.status(401).json({ error: 'Token not provided' });
     }
   };
