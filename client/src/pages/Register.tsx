@@ -28,14 +28,18 @@ const Register = () => {
   }, [navigate]);
 
   // Call login API to login after creating an account
-  const loginUser = useMutation((data: Inputs) => login(data), {
+  const loginUser = useMutation({
+    mutationFn: login,
     onSuccess: () => {
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 300);
     },
   });
 
   // Call signup API to create an account
-  const createUser = useMutation((data: Inputs) => signup(data), {
+  const createUser = useMutation({
+    mutationFn: signup,
     onSuccess: (data, variables) => {
       loginUser.mutate(variables);
       console.log(data);

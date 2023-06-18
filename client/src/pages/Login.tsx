@@ -22,7 +22,8 @@ const Login = () => {
   }, [navigate]);
 
   // Call API to login account
-  const loginUser = useMutation((data: Inputs) => login(data), {
+  const loginUser = useMutation({
+    mutationFn: login,
     onSuccess: () => {
       window.location.reload();
     },
