@@ -4,7 +4,7 @@ CREATE DATABASE gridtap_database;
 -- Enum
 CREATE TYPE user_type_enum AS ENUM ('user', 'admin');
 CREATE TYPE user_status_enum AS ENUM ('active', 'restricted');
-CREATE TYPE score_type_enum AS ENUM ('PC', 'Mobile');
+CREATE TYPE device_enum AS ENUM ('PC', 'Mobile');
 
 -- User table
 CREATE TABLE tb_users (
@@ -42,7 +42,7 @@ CREATE TABLE tb_scores (
     miss INT,
     accuracy NUMERIC(5, 2),
     max_combo INT,
-    score_type score_type_enum DEFAULT 'PC',
+    device device_enum DEFAULT 'PC',
     submitted_at TIMESTAMPTZ DEFAULT NOW(),
     FOREIGN KEY (user_id) REFERENCES tb_users(user_id)
 );
