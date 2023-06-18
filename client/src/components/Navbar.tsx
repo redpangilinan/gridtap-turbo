@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getCookies } from '../api/authentication';
+import { tokenData } from '../api/users';
 import Dropdown from './Dropdown';
 
 const Navbar = () => {
   const [navbar, setNavbar] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const { data: username } = useQuery({
+  const { data: token } = useQuery({
     queryKey: ['cookies'],
-    queryFn: getCookies,
+    queryFn: tokenData,
   });
 
   const handleDropdownClick = () => {
@@ -99,7 +99,7 @@ const Navbar = () => {
               navbar ? 'block' : 'hidden'
             }`}
           >
-            {username ? (
+            {token && token.username ? (
               <ul className='items-center justify-center space-y-8 md:flex md:space-x-6 md:space-y-0 select-none'>
                 <li className='text-gray-300'>
                   Welcome,{' '}
@@ -107,12 +107,15 @@ const Navbar = () => {
                     className='hover:text-blue-300 cursor-pointer'
                     onClick={handleDropdownClick}
                   >
-                    {username}
+                    {token.username}
                   </span>
                   !
                   {dropdownOpen && (
                     <div className='absolute mt-2 z-10'>
-                      <Dropdown username={username} handleClick={handleClick} />
+                      <Dropdown
+                        username={token.username}
+                        handleClick={handleClick}
+                      />
                     </div>
                   )}
                 </li>

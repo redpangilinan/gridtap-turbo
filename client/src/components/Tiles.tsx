@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 
 type TileProps = {
+  device: string;
   isBlack: boolean;
   isSelected: boolean;
   onClick?: () => void;
 };
 
-const Tiles: React.FC<TileProps> = ({ isBlack, onClick }) => {
+const Tiles: React.FC<TileProps> = ({ device, isBlack, onClick }) => {
   const [isClicked, setIsClicked] = useState(false);
-  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
   const handleClick = () => {
     if (!isBlack) {
@@ -23,7 +23,7 @@ const Tiles: React.FC<TileProps> = ({ isBlack, onClick }) => {
     }
   };
 
-  if (isMobile) {
+  if (device === 'Mobile') {
     return (
       <div
         className={`relative ${

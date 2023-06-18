@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import Tiles from '../components/Tiles';
 import ScoreBar from '../components/ScoreBar';
 import ScoreModal from '../components/ScoreModal';
+import { useMutation } from '@tanstack/react-query';
+import { submitScore } from '../api/users';
 
 const generateUniqueIndices = () => {
   const indices = new Set<number>();
@@ -27,8 +29,29 @@ const Game = () => {
   const [multiplier, setMultiplier] = useState(Math.round(multiPts / 4));
   const [timer, setTimer] = useState(30);
   const [modalOpen, setModalOpen] = useState(false);
+  const [device, setDevice] = useState('');
+  const [message, setMessage] = useState('');
+  const data = {
+    score: score,
+    accuracy: accuracy,
+    maxCombo: maxCombo,
+    hits: hits,
+    miss: miss,
+    device: device,
+  };
+
+  const submit = useMutation({
+    mutationFn: submitScore,
+    onSuccess: () => {
+      setMessage('Submitted at ' + new Date().toLocaleDateString());
+    },
+    onError: () => {
+      setMessage('Login to submit scores!');
+    },
+  });
 
   const openModal = () => {
+    submit.mutate(data);
     setModalOpen(true);
   };
 
@@ -55,6 +78,14 @@ const Game = () => {
   // Start the timer when a tile is clicked
   useEffect(() => {
     if (gameStart) {
+      // Identify user device
+      if (/Mobi|Android/i.test(navigator.userAgent)) {
+        setDevice('Mobile');
+      } else {
+        setDevice('PC');
+      }
+
+      // Setup game timer
       const gameTimer = setInterval(() => {
         setTimer((prevTimer) => prevTimer - 1);
       }, 1000);
@@ -92,6 +123,7 @@ const Game = () => {
       openModal();
       setGameStart(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timer]);
 
   const handleSquareClick = (index: number): void => {
@@ -154,6 +186,7 @@ const Game = () => {
           {Array.from(Array(16), (_, index) => (
             <Tiles
               key={index}
+              device={device}
               isBlack={blackSquareIndices.includes(index)}
               isSelected={selectedIndices.includes(index)}
               onClick={() => handleSquareClick(index)}
@@ -176,6 +209,7 @@ const Game = () => {
         maxCombo={maxCombo}
         hits={hits}
         miss={miss}
+        message={message}
       />
     </div>
   );
