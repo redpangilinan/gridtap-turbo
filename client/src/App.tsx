@@ -1,5 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import HelmetTags from './components/HelmetTags';
+import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -10,17 +9,14 @@ import Rankings from './pages/Rankings';
 const App = () => {
   return (
     <div className='flex flex-col min-h-screen bg-gray-900 text-gray-300'>
-      <BrowserRouter>
-        <HelmetTags />
-        <Navbar />
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/register' element={<Register />} />
-          <Route path='/rankings' element={<Rankings />} />
-          <Route path='/play' element={<Game />} />
-        </Routes>
-      </BrowserRouter>
+      <Navbar />
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+        <Route path='/rankings' element={<Rankings />} />
+        <Route path='/play' element={<Game />} />
+      </Routes>
     </div>
   );
 };
