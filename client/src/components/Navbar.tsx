@@ -1,23 +1,29 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { tokenData } from '../api/users';
 import Dropdown from './Dropdown';
 
-const Navbar = () => {
+type tokenData = {
+  auth: {
+    accessToken: string;
+    decoded: {
+      userId: number;
+      username: string;
+      userType: string;
+      iat: number;
+      exp: number;
+    };
+  };
+};
+
+const Navbar: React.FC<tokenData> = ({ auth }) => {
   const [navbar, setNavbar] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  const { data: token } = useQuery({
-    queryKey: ['cookies'],
-    queryFn: tokenData,
-  });
 
   const handleDropdownClick = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
-  const handleClick = () => {
+  const handleClick = async () => {
     setDropdownOpen(false);
     setNavbar(false);
   };
@@ -99,7 +105,7 @@ const Navbar = () => {
               navbar ? 'block' : 'hidden'
             }`}
           >
-            {token && token.decoded.username ? (
+            {auth && auth.decoded.username ? (
               <ul className='items-center justify-center space-y-8 md:flex md:space-x-6 md:space-y-0 select-none'>
                 <li className='text-gray-300'>
                   Welcome,{' '}
@@ -107,13 +113,13 @@ const Navbar = () => {
                     className='hover:text-blue-300 cursor-pointer'
                     onClick={handleDropdownClick}
                   >
-                    {token.decoded.username}
+                    {auth.decoded.username}
                   </span>
                   !
                   {dropdownOpen && (
                     <div className='absolute mt-2 z-10'>
                       <Dropdown
-                        username={token.decoded.username}
+                        username={auth.decoded.username}
                         handleClick={handleClick}
                       />
                     </div>

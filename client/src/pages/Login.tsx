@@ -1,30 +1,35 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import ErrorMessage from '../components/ErrorMessage';
-import { login, validateLogin } from '../api/authentication';
+import { login } from '../api/authentication';
 
 type Inputs = {
   username: string;
   password: string;
 };
 
-const Login = () => {
+type tokenData = {
+  auth: {
+    accessToken: string;
+  };
+};
+
+const Login: React.FC<tokenData> = (auth) => {
   const { register, handleSubmit } = useForm<Inputs>();
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  // Redirect to homepage if user is logged in
-  useEffect(() => {
-    validateLogin(navigate);
-  }, [navigate]);
+  if (auth.auth) {
+    navigate('/');
+  }
 
   // Call API to login account
   const loginUser = useMutation({
     mutationFn: login,
     onSuccess: () => {
-      window.location.reload();
+      navigate(0);
     },
     onError: () => {
       setMessage('Your username or password is incorrect!');

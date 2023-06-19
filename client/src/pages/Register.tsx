@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
-import { login, signup, validateLogin } from '../api/authentication';
+import { login, signup } from '../api/authentication';
 import ErrorMessage from '../components/ErrorMessage';
 
 type Inputs = {
@@ -12,7 +12,13 @@ type Inputs = {
   confirmPassword: string;
 };
 
-const Register = () => {
+type tokenData = {
+  auth: {
+    accessToken: string;
+  };
+};
+
+const Register: React.FC<tokenData> = (auth) => {
   const {
     register,
     handleSubmit,
@@ -22,10 +28,9 @@ const Register = () => {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  // Redirect to homepage if user is logged in
-  useEffect(() => {
-    validateLogin(navigate);
-  }, [navigate]);
+  if (auth.auth) {
+    navigate('/');
+  }
 
   // Call login API to login after creating an account
   const loginUser = useMutation({

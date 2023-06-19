@@ -1,7 +1,6 @@
 import React from 'react';
-import axios from 'axios';
-axios.defaults.withCredentials = true;
-import { Link } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../api/authentication';
 
 type DropdownProps = {
@@ -10,8 +9,20 @@ type DropdownProps = {
 };
 
 const Dropdown: React.FC<DropdownProps> = ({ username, handleClick }) => {
-  const handleLogout = async () => {
-    logout();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  // Call API to logout account
+  const logoutUser = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      navigate(0);
+      queryClient.clear();
+    },
+  });
+
+  const handleLogout = () => {
+    logoutUser.mutate();
   };
 
   return (
@@ -44,13 +55,13 @@ const Dropdown: React.FC<DropdownProps> = ({ username, handleClick }) => {
       </ul>
       <div className='py-2'>
         {/* a href for page refresh (re-renders the whole page) */}
-        <a
-          href='/login'
+        <Link
+          to='/login'
           onClick={handleLogout}
           className='block px-4 py-2 text-sm hover:bg-gray-600 text-gray-200 hover:text-white'
         >
           Log out
-        </a>
+        </Link>
       </div>
     </div>
   );
