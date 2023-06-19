@@ -25,8 +25,8 @@ const Game = () => {
   const [accuracy, setAccuracy] = useState(0);
   const [combo, setCombo] = useState(0);
   const [maxCombo, setMaxCombo] = useState(0);
-  const [multiPts, setMultiPts] = useState(4);
-  const [multiplier, setMultiplier] = useState(Math.round(multiPts / 4));
+  const [multiPts, setMultiPts] = useState(5);
+  const [multiplier, setMultiplier] = useState(Math.round(multiPts / 5));
   const [timer, setTimer] = useState(30);
   const [modalOpen, setModalOpen] = useState(false);
   const [device, setDevice] = useState('');
@@ -65,7 +65,7 @@ const Game = () => {
     setAccuracy(0);
     setCombo(0);
     setMaxCombo(0);
-    setMultiPts(4);
+    setMultiPts(5);
     setTimer(30);
     setBlackSquareIndices(generateUniqueIndices());
   };
@@ -91,12 +91,12 @@ const Game = () => {
       }, 1000);
       const multiplierTimer = setInterval(() => {
         setMultiPts((prevMultiPts) => {
-          if (prevMultiPts > 4) {
+          if (prevMultiPts > 5) {
             return prevMultiPts - 1;
           }
           return prevMultiPts;
         });
-      }, 250);
+      }, 300);
 
       return () => {
         clearInterval(gameTimer);
@@ -107,7 +107,7 @@ const Game = () => {
 
   // Update multiplier everytime multiPts changes
   useEffect(() => {
-    setMultiplier(Math.round(multiPts / 4));
+    setMultiplier(Math.round(multiPts / 5));
   }, [multiPts]);
 
   // Update highest combo
@@ -152,13 +152,13 @@ const Game = () => {
       setHits((prevHits) => prevHits + 1);
       setCombo((prevCombo) => prevCombo + 1);
       setMultiPts((prevMultiPts) =>
-        prevMultiPts < 20 ? prevMultiPts + 1 : prevMultiPts
+        prevMultiPts < 25 ? prevMultiPts + 1 : prevMultiPts
       );
       setScore((prevScore) => prevScore + multiplier);
     } else {
       setMiss((prevMiss) => prevMiss + 1);
       setCombo(0);
-      setMultiPts(4);
+      setMultiPts(5);
     }
   };
 
