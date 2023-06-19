@@ -21,8 +21,6 @@ export const signup = async (data: Inputs) => {
 export const logout = async () => {
   const apiUrl = `${import.meta.env.VITE_BASE_URL}/cookies/delete`;
   await axios.delete(apiUrl, { withCredentials: true });
-
-  sessionStorage.clear();
 };
 
 // Redirect to homepage when login or register is accessed while token is active

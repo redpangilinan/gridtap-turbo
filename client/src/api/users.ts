@@ -25,7 +25,7 @@ export const tokenData = () => {
 export const submitScore = async (data: ScoreProps) => {
   const token = await tokenData();
   const userId = token.decoded.userId;
-  const jwtToken = token.token;
+  const jwtToken = token.accessToken;
   const postData = { ...data, userId };
   const apiUrl = `${import.meta.env.VITE_BASE_URL}/scores`;
   await axios.post(apiUrl, postData, {
