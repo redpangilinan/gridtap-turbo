@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { config } from 'dotenv';
 import cors from 'cors';
 import { pool } from '../db';
+import validateToken from '../middleware/validateToken';
 
 config();
 const app = express.Router();
@@ -11,7 +12,7 @@ app.use(cors({ origin: [process.env.DOMAIN], credentials: true }));
 app.use(express.json());
 
 // Submit scores
-app.post('/', async (req: Request, res: Response) => {
+app.post('/', validateToken('any'), async (req: Request, res: Response) => {
   try {
     const client = await pool.connect();
 
@@ -21,19 +22,6 @@ app.post('/', async (req: Request, res: Response) => {
     SELECT COUNT(*) AS score_count FROM tb_scores WHERE user_id = $1`;
     const countResult = await client.query(query, [userId]);
     const scoreCount = countResult.rows[0].score_count;
-
-    let lowestScore = Infinity;
-
-    if (scoreCount >= 10) {
-      query = `
-      SELECT score FROM tb_scores WHERE user_id = $1 ORDER BY score ASC LIMIT 1`;
-      const lowestScoreResult = await client.query(query, [userId]);
-      lowestScore = lowestScoreResult.rows[0].score;
-
-      if (score <= lowestScore) {
-        client.release();
-      }
-    }
 
     query = `
     UPDATE tb_users SET scores = scores + 1 WHERE user_id = $1`;
@@ -46,10 +34,15 @@ app.post('/', async (req: Request, res: Response) => {
     const values = [userId, score, accuracy, maxCombo, hits, miss, device];
     const insertResult = await client.query(query, values);
 
+    query = `
+    SELECT score_id FROM tb_scores WHERE user_id = $1 ORDER BY score, submitted_at ASC LIMIT 1`;
+    const lowestScoreResult = await client.query(query, [userId]);
+    const lowestScoreId = lowestScoreResult.rows[0].score_id;
+
     if (scoreCount >= 10) {
       query = `
-      DELETE FROM tb_scores WHERE user_id = $1 AND score = $2`;
-      await client.query(query, [userId, lowestScore]);
+      DELETE FROM tb_scores WHERE user_id = $1 AND score_id = $2`;
+      await client.query(query, [userId, lowestScoreId]);
     }
 
     client.release();
