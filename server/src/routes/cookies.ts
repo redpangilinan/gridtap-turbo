@@ -19,7 +19,11 @@ app.get('/', async (req: Request, res: Response) => {
   if (token) {
     try {
       const decoded = jwt.verify(token, process.env.SECRET_KEY);
-      res.status(200).json(decoded);
+      const responseObj = {
+        token: token,
+        decoded: decoded,
+      };
+      res.status(200).json(responseObj);
     } catch (error) {
       res.sendStatus(401);
     }

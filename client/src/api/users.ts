@@ -24,8 +24,13 @@ export const tokenData = () => {
 // Score submission
 export const submitScore = async (data: ScoreProps) => {
   const token = await tokenData();
-  const userId = token.userId;
+  const userId = token.decoded.userId;
+  const jwtToken = token.token;
   const postData = { ...data, userId };
   const apiUrl = `${import.meta.env.VITE_BASE_URL}/scores`;
-  await axios.post(apiUrl, postData);
+  await axios.post(apiUrl, postData, {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  });
 };

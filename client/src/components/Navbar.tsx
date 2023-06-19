@@ -23,7 +23,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className='w-full bg-gray-900'>
+    <nav className='w-full bg-gray-900 select-none'>
       <div className='justify-between px-4 mx-auto lg:max-w-7xl md:items-center md:flex md:px-8'>
         <div>
           <div className='flex items-center justify-between py-3 md:py-5 md:block'>
@@ -99,7 +99,7 @@ const Navbar = () => {
               navbar ? 'block' : 'hidden'
             }`}
           >
-            {token && token.username ? (
+            {token && token.decoded.username ? (
               <ul className='items-center justify-center space-y-8 md:flex md:space-x-6 md:space-y-0 select-none'>
                 <li className='text-gray-300'>
                   Welcome,{' '}
@@ -107,13 +107,13 @@ const Navbar = () => {
                     className='hover:text-blue-300 cursor-pointer'
                     onClick={handleDropdownClick}
                   >
-                    {token.username}
+                    {token.decoded.username}
                   </span>
                   !
                   {dropdownOpen && (
                     <div className='absolute mt-2 z-10'>
                       <Dropdown
-                        username={token.username}
+                        username={token.decoded.username}
                         handleClick={handleClick}
                       />
                     </div>
