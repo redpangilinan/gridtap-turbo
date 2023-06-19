@@ -8,7 +8,6 @@ import { login, validateLogin } from '../api/authentication';
 type Inputs = {
   username: string;
   password: string;
-  remember: string;
 };
 
 const Login = () => {
@@ -66,22 +65,7 @@ const Login = () => {
             placeholder='Password'
           />
         </div>
-        <div className='flex items-center justify-between pb-4'>
-          <div className='flex flex-row items-center'>
-            <input
-              id='remember'
-              aria-describedby='remember'
-              type='checkbox'
-              className='focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded'
-              {...register('remember')}
-            />
-            <label
-              htmlFor='remember'
-              className='ml-2 text-sm font-normal text-gray-400'
-            >
-              Remember me
-            </label>
-          </div>
+        {/* <div className='flex items-center justify-end pb-4'>
           <div>
             <Link
               to='/forgot-password'
@@ -90,7 +74,7 @@ const Login = () => {
               Forgot password?
             </Link>
           </div>
-        </div>
+        </div> */}
         <div>
           <input
             type='submit'

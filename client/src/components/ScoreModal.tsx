@@ -24,7 +24,7 @@ const Modal: React.FC<ScoreProps> = ({
   }
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center select-none'>
+    <div className='fixed inset-0 z-50 flex items-center justify-center m-2 select-none'>
       <div className='fixed inset-0 bg-gray-900 opacity-75'></div>
       <div className='relative bg-gray-900 p-8 w-full max-w-sm mx-auto rounded border'>
         <button
