@@ -50,7 +50,7 @@ app.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// Select all users
+// Select all active users for leaderboards
 app.get('/', async (req: Request, res: Response) => {
   try {
     const client = await pool.connect();
@@ -70,6 +70,7 @@ app.get('/', async (req: Request, res: Response) => {
         FROM tb_scores
         GROUP BY user_id
       ) s ON u.user_id = s.user_id
+      WHERE u.user_status = 'active'
       ORDER BY top_score DESC, u.created_at`;
 
     const result = await client.query(query);
