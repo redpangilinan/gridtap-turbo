@@ -16,7 +16,7 @@ const Button: React.FC<BtnProps> = ({
   return (
     <button
       type={type}
-      className={`inline-flex items-center font-semibold py-2 px-4 border border-gray-400 rounded shadow active:bg-gray-400 transition ease-in-out duration-150 ${
+      className={`inline-flex items-center font-semibold py-2 px-4 border border-neutral-400 rounded shadow active:bg-neutral-400 transition ease-in-out duration-150 ${
         processing ? 'opacity-25' : ''
       } ${className}`}
       disabled={processing}

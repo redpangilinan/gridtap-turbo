@@ -28,17 +28,17 @@ const Dropdown: React.FC<DropdownProps> = ({ username, handleClick }) => {
   return (
     <div
       id='dropdown'
-      className='z-10 divide-y rounded-lg shadow w-44 bg-gray-700 divide-gray-600'
+      className='z-10 divide-y rounded-lg shadow w-44 bg-neutral-700 divide-neutral-600'
     >
       <ul
-        className='py-2 text-sm text-gray-200'
+        className='py-2 text-sm text-neutral-200'
         aria-labelledby='dropdownButton'
       >
         <li>
           <Link
             to={`/user/${username}`}
             onClick={handleClick}
-            className='block px-4 py-2 hover:bg-gray-600 hover:text-white'
+            className='block px-4 py-2 hover:bg-neutral-600 hover:text-white'
           >
             Profile
           </Link>
@@ -47,7 +47,7 @@ const Dropdown: React.FC<DropdownProps> = ({ username, handleClick }) => {
           <Link
             to='/settings'
             onClick={handleClick}
-            className='block px-4 py-2 hover:bg-gray-600 hover:text-white'
+            className='block px-4 py-2 hover:bg-neutral-600 hover:text-white'
           >
             Settings
           </Link>
@@ -58,7 +58,7 @@ const Dropdown: React.FC<DropdownProps> = ({ username, handleClick }) => {
         <Link
           to='/login'
           onClick={handleLogout}
-          className='block px-4 py-2 text-sm hover:bg-gray-600 text-gray-200 hover:text-white'
+          className='block px-4 py-2 text-sm hover:bg-neutral-600 text-neutral-200 hover:text-white'
         >
           Log out
         </Link>

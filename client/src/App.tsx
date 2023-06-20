@@ -19,7 +19,6 @@ const App = () => {
       refreshUserTokens()
         .then(() => {
           refetch();
-          console.log('Access token refreshed');
         })
         .catch((error) => {
           console.error('Failed to refresh tokens:', error);
@@ -28,7 +27,7 @@ const App = () => {
   });
 
   return (
-    <div className='flex flex-col min-h-screen bg-gray-900 text-gray-300'>
+    <div className='flex flex-col min-h-screen bg-neutral-900 text-neutral-300'>
       <Navbar auth={token} />
       <Routes>
         <Route path='/' element={<Home />} />

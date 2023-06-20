@@ -4,8 +4,8 @@ import 'react-loading-skeleton/dist/skeleton.css';
 const LoadingTable = () => {
   return (
     <div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
-      <table className='w-full text-sm text-left text-gray-400'>
-        <thead className='text-xs uppercase bg-gray-700 text-gray-400'>
+      <table className='w-full text-sm text-left text-neutral-400'>
+        <thead className='text-xs uppercase bg-neutral-700 text-neutral-400'>
           <tr>
             <th scope='col' className='px-6 py-3'>
               Rank
@@ -21,11 +21,11 @@ const LoadingTable = () => {
             </th>
           </tr>
         </thead>
-        <tbody className='bg-gray-800 divide-y divide-gray-700'>
+        <tbody className='bg-neutral-800 divide-y divide-neutral-700'>
           {Array.from({ length: 10 }).map((_, index) => (
             <tr
               key={index}
-              className='border-b bg-gray-800 border-gray-700 hover:bg-gray-600'
+              className='border-b bg-neutral-800 border-neutral-700 hover:bg-neutral-600'
             >
               <td className='px-6 py-4'>
                 <Skeleton

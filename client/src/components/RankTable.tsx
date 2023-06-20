@@ -17,8 +17,8 @@ type RankTableProps = {
 const RankTable: React.FC<RankTableProps> = ({ data }) => {
   return (
     <div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
-      <table className='w-full text-sm text-left text-gray-400'>
-        <thead className='text-xs uppercase bg-gray-700 text-gray-400'>
+      <table className='w-full text-sm text-left text-neutral-400'>
+        <thead className='text-xs uppercase bg-neutral-700 text-neutral-400'>
           <tr>
             <th scope='col' className='px-6 py-3'>
               Rank
@@ -37,17 +37,17 @@ const RankTable: React.FC<RankTableProps> = ({ data }) => {
             </th>
           </tr>
         </thead>
-        <tbody className='bg-gray-800 divide-y divide-gray-700'>
+        <tbody className='bg-neutral-800 divide-y divide-neutral-700'>
           {data.map((user, index) => (
             <tr
               key={user.user_id}
-              className=' border-b bg-gray-800 border-gray-700 hover:bg-gray-600'
+              className=' border-b bg-neutral-800 border-neutral-700 hover:bg-neutral-600'
             >
               <td className='px-6 py-4'>{index + 1}</td>
               <td className='px-6 py-4 font-medium whitespace-nowrap text-white'>
                 <Link
                   to={`/user/${user.username}`}
-                  className='max-w-xs overflow-hidden inline-block truncate hover:text-gray-100'
+                  className='max-w-xs overflow-hidden inline-block truncate hover:text-neutral-100'
                 >
                   {user.username}
                 </Link>

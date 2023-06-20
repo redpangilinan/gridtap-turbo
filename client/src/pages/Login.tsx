@@ -44,7 +44,7 @@ const Login: React.FC<tokenData> = (auth) => {
     <div className='flex justify-center items-center h-full'>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className='max-w-lg w-full bg-gray-800 rounded p-6 md:p-12 mt-12 mx-2 space-y-4 shadow'
+        className='max-w-lg w-full bg-neutral-800 rounded p-6 md:p-12 mt-12 mx-2 space-y-4 shadow'
       >
         <div className='pb-2'>
           <h2 className='text-xl font-bold text-white'>
@@ -57,7 +57,7 @@ const Login: React.FC<tokenData> = (auth) => {
         <div className='pb-2'>
           <input
             {...register('username')}
-            className='w-full p-2 md:p-3 text-sm bg-gray-50 focus:outline-none border border-gray-200 rounded text-gray-600'
+            className='w-full p-2 md:p-3 text-sm bg-neutral-50 focus:outline-none border border-neutral-200 rounded text-neutral-600'
             type='text'
             placeholder='Username'
           />
@@ -65,7 +65,7 @@ const Login: React.FC<tokenData> = (auth) => {
         <div className='pb-2'>
           <input
             {...register('password')}
-            className='w-full p-2 md:p-3 text-sm bg-gray-50 focus:outline-none border border-gray-200 rounded text-gray-600'
+            className='w-full p-2 md:p-3 text-sm bg-neutral-50 focus:outline-none border border-neutral-200 rounded text-neutral-600'
             type='password'
             placeholder='Password'
           />
@@ -83,12 +83,12 @@ const Login: React.FC<tokenData> = (auth) => {
         <div>
           <input
             type='submit'
-            className='w-full py-2 md:py-3 bg-blue-600 hover:bg-blue-700 rounded text-sm font-bold cursor-pointer text-gray-50 transition duration-200'
+            className='w-full py-2 md:py-3 bg-blue-600 hover:bg-blue-700 rounded text-sm font-bold cursor-pointer text-neutral-50 transition duration-200'
             value={loginUser.isLoading ? 'Logging in...' : 'Log in'}
             disabled={loginUser.isLoading}
           />
         </div>
-        <p className='text-sm font-light text-gray-400'>
+        <p className='text-sm font-light text-neutral-400'>
           Don’t have an account yet?{' '}
           <Link
             to='/register'
