@@ -1,18 +1,30 @@
 import { Routes, Route } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { tokenData } from './api/users';
+import { getUserTokens, refreshUserTokens } from './api/users';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Game from './pages/Game';
 import Rankings from './pages/Rankings';
+import Profile from './pages/Profile';
 
 const App = () => {
-  const { data: token } = useQuery({
-    queryKey: ['cookies'],
-    queryFn: tokenData,
+  const { data: token, refetch } = useQuery({
+    queryKey: ['auth'],
+    queryFn: getUserTokens,
     staleTime: 300000,
+    retry: false,
+    onError: () => {
+      refreshUserTokens()
+        .then(() => {
+          refetch();
+          console.log('Access token refreshed');
+        })
+        .catch((error) => {
+          console.error('Failed to refresh tokens:', error);
+        });
+    },
   });
 
   return (
@@ -24,6 +36,7 @@ const App = () => {
         <Route path='/register' element={<Register auth={token} />} />
         <Route path='/rankings' element={<Rankings />} />
         <Route path='/play' element={<Game />} />
+        <Route path='/user/:username' element={<Profile />} />
       </Routes>
     </div>
   );

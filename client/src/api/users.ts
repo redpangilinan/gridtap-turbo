@@ -15,15 +15,27 @@ export const getUsers = () => {
   return axios.get(apiUrl).then((res) => res.data);
 };
 
-// Get user data from JWT token
-export const tokenData = () => {
-  const apiUrl = `${import.meta.env.VITE_BASE_URL}/cookies`;
+// Get the user data by username
+export const getUserByUsername = (username: string) => {
+  const apiUrl = `${import.meta.env.VITE_BASE_URL}/users/${username}`;
+  return axios.get(apiUrl).then((res) => res.data);
+};
+
+// Get user data from access token
+export const getUserTokens = () => {
+  const apiUrl = `${import.meta.env.VITE_BASE_URL}/auth`;
   return axios.get(apiUrl, { withCredentials: true }).then((res) => res.data);
+};
+
+// Refresh access token
+export const refreshUserTokens = () => {
+  const apiUrl = `${import.meta.env.VITE_BASE_URL}/auth/refresh`;
+  return axios.get(apiUrl, { withCredentials: true });
 };
 
 // Score submission
 export const submitScore = async (data: ScoreProps) => {
-  const token = await tokenData();
+  const token = await getUserTokens();
   const userId = token.decoded.userId;
   const jwtToken = token.accessToken;
   const postData = { ...data, userId };

@@ -3,7 +3,7 @@ import Tiles from '../components/Tiles';
 import ScoreBar from '../components/ScoreBar';
 import ScoreModal from '../components/ScoreModal';
 import { useMutation } from '@tanstack/react-query';
-import { submitScore } from '../api/users';
+import { submitScore, refreshUserTokens } from '../api/users';
 
 const generateUniqueIndices = () => {
   const indices = new Set<number>();
@@ -46,7 +46,13 @@ const Game = () => {
       setMessage('Submitted at ' + new Date().toLocaleDateString());
     },
     onError: () => {
-      setMessage('Login to submit scores!');
+      refreshUserTokens()
+        .then(() => {
+          submit.mutate(data);
+        })
+        .catch(() => {
+          setMessage('Login to submit scores!');
+        });
     },
   });
 
