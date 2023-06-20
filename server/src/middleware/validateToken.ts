@@ -7,18 +7,22 @@ function validateToken(userType) {
   return function (req, res, next) {
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.split(' ')[1];
-      jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
-        if (err) {
-          console.log('Error: ' + err);
-          return res.status(401).json({ error: 'Invalid token' });
+      const accessToken = authHeader.split(' ')[1];
+      jwt.verify(
+        accessToken,
+        process.env.ACCESS_TOKEN_SECRET,
+        (err, decoded) => {
+          if (err) {
+            console.log('Error: ' + err);
+            return res.status(401).json({ error: 'Invalid token' });
+          }
+          if (userType !== 'any' && decoded.userType !== userType) {
+            return res.status(403).json({ error: 'Access forbidden' });
+          }
+          req.user = decoded;
+          next();
         }
-        if (userType !== 'any' && decoded.userType !== userType) {
-          return res.status(403).json({ error: 'Access forbidden' });
-        }
-        req.user = decoded;
-        next();
-      });
+      );
     } else {
       console.log('No token provided!');
       res.status(401).json({ error: 'Token not provided' });
