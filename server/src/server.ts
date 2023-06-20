@@ -2,7 +2,7 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { config } from 'dotenv';
 import usersRouter from './routes/users';
-import cookiesRouter from './routes/cookies';
+import authRouter from './routes/auth';
 import scoresRouter from './routes/scores';
 
 config();
@@ -40,7 +40,7 @@ if (process.env.NODE_ENV === 'production') {
 
 // Routes
 app.use('/users', limiter, usersRouter);
-app.use('/cookies', limiter, cookiesRouter);
+app.use('/auth', limiter, authRouter);
 app.use('/scores', limiter, scoresRouter);
 
 app.listen(port, () => {
