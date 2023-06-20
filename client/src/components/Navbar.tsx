@@ -4,13 +4,8 @@ import Dropdown from './Dropdown';
 
 type tokenData = {
   auth: {
-    accessToken: string;
     decoded: {
-      userId: number;
       username: string;
-      userType: string;
-      iat: number;
-      exp: number;
     };
   };
 };

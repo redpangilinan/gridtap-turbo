@@ -73,7 +73,7 @@ const Modal: React.FC<ScoreProps> = ({
               <span className='text-lg font-semibold'>{maxCombo}</span>
             </div>
           </div>
-          <div className='overflow-hidden'>[ {message} ]</div>
+          <div className='overflow-hidden'>{message}</div>
         </div>
       </div>
     </div>
