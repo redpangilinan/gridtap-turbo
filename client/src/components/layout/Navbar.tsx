@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Dropdown from '../common/Dropdown';
 
@@ -13,15 +13,32 @@ type tokenData = {
 const Navbar: React.FC<tokenData> = ({ auth }) => {
   const [navbar, setNavbar] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleDropdownClick = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
   const handleClick = async () => {
-    setDropdownOpen(false);
     setNavbar(false);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
 
   return (
     <nav className='w-full bg-neutral-900 select-none'>
@@ -99,6 +116,7 @@ const Navbar: React.FC<tokenData> = ({ auth }) => {
             className={`flex-1 justify-self-center border p-4 rounded-b-md md:block md:p-0 md:mt-0 md:border-none ${
               navbar ? 'block' : 'hidden'
             }`}
+            ref={dropdownRef}
           >
             {auth && auth.decoded.username ? (
               <ul className='items-center justify-center space-y-8 md:flex md:space-x-6 md:space-y-0 select-none'>
