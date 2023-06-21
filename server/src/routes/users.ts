@@ -56,10 +56,11 @@ app.get('/', async (req: Request, res: Response) => {
 
     const query = `
       SELECT 
-        u.user_id, 
-        u.username, 
-        u.email, 
-        u.scores, 
+        u.user_id,
+        u.username,
+        u.email,
+        u.scores,
+        u.user_type,
         COALESCE(s.top_score, 0) AS top_score,
         COALESCE(((top_score * u.scores) / 10000), 0) + 1 AS level,
         TRUNC(((COALESCE(((top_score::numeric * u.scores) / 10000), 0) + 1) - (COALESCE(((top_score * u.scores) / 10000), 0) + 1))*100::numeric, 2) AS exp_percent
@@ -90,10 +91,12 @@ app.get('/:username', async (req: Request, res: Response) => {
     const { username } = req.params;
     const query = `
       SELECT 
-        u.user_id, 
-        u.username, 
-        u.email, 
-        u.scores, 
+        u.user_id,
+        u.username,
+        u.email,
+        u.scores,
+        u.user_type,
+        u.created_at,
         COALESCE(s.top_score, 0) AS top_score,
         COALESCE(((top_score * u.scores) / 10000), 0) + 1 AS level,
         TRUNC(((COALESCE(((top_score::numeric * u.scores) / 10000), 0) + 1) - (COALESCE(((top_score * u.scores) / 10000), 0) + 1))*100::numeric, 2) AS exp_percent

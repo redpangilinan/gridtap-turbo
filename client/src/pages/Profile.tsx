@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { getUserByUsername } from '../api/users';
 import { useParams } from 'react-router-dom';
-import ExpBar from '../components/ExpBar';
-import LoadingSpinner from '../components/LoadingSpinner';
+import ExpBar from '../components/pages/Profile/ExpBar';
+import LoadingSpinner from '../components/loaders/LoadingSpinner';
+import Badge from '../components/common/Badge';
 
 const Profile = () => {
   const { username } = useParams<{ username: string }>();
@@ -37,9 +38,12 @@ const Profile = () => {
       <div className='w-full rounded shadow p-6'>
         <div className='flex flex-col lg:flex-row gap-4'>
           <div className='w-full lg:w-1/3 bg-neutral-800 p-8 h-full rounded-md'>
-            <h2 className='text-2xl font-bold mb-4'>{user.username}</h2>
+            <h2 className='text-2xl font-bold mb-4'>
+              {user.username}
+              {user.user_type === 'admin' && <Badge>Dev</Badge>}
+            </h2>
             <ExpBar lvl={user.level} exp={user.exp_percent} />
-            <div className='flex'>
+            <div className='flex mb-4'>
               <div className='flex-1'>
                 <p>
                   <span className='font-bold'>Best Score:</span>{' '}
@@ -51,6 +55,14 @@ const Profile = () => {
                   <span className='font-bold'>Total Scores:</span> {user.scores}
                 </p>
               </div>
+            </div>
+            <div>
+              Joined{' '}
+              {new Date(user.created_at).toLocaleString('en-US', {
+                month: 'long',
+                day: '2-digit',
+                year: 'numeric',
+              })}
             </div>
           </div>
           <div className='w-full lg:w-2/3 bg-neutral-800 p-8 rounded-md'>

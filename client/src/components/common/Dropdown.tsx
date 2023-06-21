@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
-import { logout } from '../api/authentication';
+import { logout } from '../../api/authentication';
 
 type DropdownProps = {
   username: string;

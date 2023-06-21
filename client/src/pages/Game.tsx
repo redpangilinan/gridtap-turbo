@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import Tiles from '../components/Tiles';
-import ScoreBar from '../components/ScoreBar';
-import ScoreModal from '../components/ScoreModal';
+import Tiles from '../components/pages/Game/Tiles';
+import ScoreBar from '../components/pages/Game/ScoreBar';
+import ScoreModal from '../components/pages/Game/ScoreModal';
 import { useMutation } from '@tanstack/react-query';
 import { submitScore, refreshUserTokens } from '../api/users';
 

@@ -1,5 +1,5 @@
-import RankTable from '../components/RankTable';
-import LoadingTable from '../components/LoadingTable';
+import RankTable from '../components/pages/Rankings/RankTable';
+import LoadingTable from '../components/loaders/LoadingTable';
 import { useQuery } from '@tanstack/react-query';
 import { getUsers } from '../api/users';
 

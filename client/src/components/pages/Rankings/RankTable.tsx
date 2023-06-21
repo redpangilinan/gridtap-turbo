@@ -1,5 +1,5 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
+import Badge from '../../common/Badge';
 
 type TableData = {
   user_id: number;
@@ -8,6 +8,7 @@ type TableData = {
   exp_percent: number;
   scores: number;
   top_score: number;
+  user_type: string;
 };
 
 type RankTableProps = {
@@ -15,6 +16,10 @@ type RankTableProps = {
 };
 
 const RankTable: React.FC<RankTableProps> = ({ data }) => {
+  if (data.length <= 0) {
+    return <div>No users</div>;
+  }
+
   return (
     <div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
       <table className='w-full text-sm text-left text-neutral-400'>
@@ -50,6 +55,7 @@ const RankTable: React.FC<RankTableProps> = ({ data }) => {
                   className='max-w-xs overflow-hidden inline-block truncate hover:text-neutral-100'
                 >
                   {user.username}
+                  {user.user_type === 'admin' && <Badge>Dev</Badge>}
                 </Link>
               </td>
               <td className='px-6 py-4'>
