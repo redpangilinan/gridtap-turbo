@@ -82,7 +82,7 @@ app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     const client = await pool.connect();
-    const query = `SELECT * FROM tb_users WHERE username = $1`;
+    const query = `SELECT * FROM tb_users WHERE username = $1 AND user_status = 'active'`;
     const result = await client.query(query, [username]);
     client.release();
 

@@ -24,6 +24,14 @@ app.post('/', validateToken('any'), async (req: Request, res: Response) => {
     const scoreCount = countResult.rows[0].score_count;
 
     query = `
+    SELECT status FROM tb_users WHERE user_id = $1`;
+    const userStatus = await client.query(query, [userId]);
+    if (userStatus.rows[0].status === 'restricted') {
+      client.release();
+      return res.status(403).json({ error: 'Restricted account.' });
+    }
+
+    query = `
     UPDATE tb_users SET scores = scores + 1 WHERE user_id = $1`;
     await client.query(query, [userId]);
 

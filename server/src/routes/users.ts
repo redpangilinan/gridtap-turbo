@@ -106,7 +106,8 @@ app.get('/:username', async (req: Request, res: Response) => {
         FROM tb_scores
         GROUP BY user_id
       ) s ON u.user_id = s.user_id
-      WHERE u.username = $1`;
+      WHERE u.username = $1
+      AND u.user_status = 'active'`;
     const values = [username];
     const result = await client.query(query, values);
 
