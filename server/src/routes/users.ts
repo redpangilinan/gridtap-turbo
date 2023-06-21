@@ -27,8 +27,7 @@ app.post('/', async (req: Request, res: Response) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    let query = `
-    INSERT INTO tb_users (username, password, user_type`;
+    let query = `INSERT INTO tb_users (username, password, user_type`;
 
     const values = [username, hashedPassword, user_type || 'user'];
 
@@ -89,7 +88,9 @@ app.get('/:username', async (req: Request, res: Response) => {
     const client = await pool.connect();
 
     const { username } = req.params;
-    const query = `
+    const values = [username];
+
+    let query = `
       SELECT 
         u.user_id,
         u.username,
@@ -108,11 +109,23 @@ app.get('/:username', async (req: Request, res: Response) => {
       ) s ON u.user_id = s.user_id
       WHERE u.username = $1
       AND u.user_status = 'active'`;
-    const values = [username];
-    const result = await client.query(query, values);
+    const userResult = await client.query(query, values);
+
+    query = `
+      SELECT tb_scores.*
+      FROM tb_scores
+      JOIN tb_users ON tb_scores.user_id = tb_users.user_id
+      WHERE tb_users.username = $1
+      ORDER BY tb_scores.score DESC;`;
+    const scoresResult = await client.query(query, values);
+
+    const response = {
+      user: userResult.rows[0],
+      scores: scoresResult.rows,
+    };
 
     client.release();
-    res.json(result.rows[0]);
+    res.json(response);
   } catch (err) {
     console.error('Error fetching user', err);
     res.status(500).json({ error: 'Error fetching user' });

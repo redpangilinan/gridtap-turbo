@@ -24,7 +24,7 @@ app.post('/', validateToken('any'), async (req: Request, res: Response) => {
     const scoreCount = countResult.rows[0].score_count;
 
     query = `
-    SELECT status FROM tb_users WHERE user_id = $1`;
+    SELECT user_status FROM tb_users WHERE user_id = $1`;
     const userStatus = await client.query(query, [userId]);
     if (userStatus.rows[0].status === 'restricted') {
       client.release();

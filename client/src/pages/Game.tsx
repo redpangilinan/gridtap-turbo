@@ -102,7 +102,7 @@ const Game = () => {
           }
           return prevMultiPts;
         });
-      }, 300);
+      }, 350);
 
       return () => {
         clearInterval(gameTimer);
