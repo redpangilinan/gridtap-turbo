@@ -1,6 +1,7 @@
-import ExpBar from '../../pages/Profile/ExpBar';
 import Badge from '../../common/Badge';
+import ExpBar from './ExpBar';
 import ScoreCard from './ScoreCard';
+import LastOnline from './LastOnline';
 
 type ProfileProps = {
   data: {
@@ -12,6 +13,7 @@ type ProfileProps = {
       top_score: number;
       scores: number;
       created_at: string;
+      updated_at: string;
     };
     rank: {
       user_rank: number;
@@ -64,13 +66,14 @@ const ProfilePage: React.FC<ProfileProps> = ({ data }) => {
             <div className='flex-1'>Highest Hits</div>
             <div className='flex-1'>{data.stats.highest_hits ?? '0'}</div>
           </div>
-          <div className='text-neutral-400 mt-4'>
+          <div className='text-neutral-400 flex flex-col-reverse md:flex-row justify-between mt-4'>
             Joined{' '}
             {new Date(data.user.created_at).toLocaleString('en-US', {
               month: 'long',
               day: '2-digit',
               year: 'numeric',
             })}
+            <LastOnline time={data.user.updated_at} />
           </div>
         </div>
         <div className='w-full lg:w-2/3 bg-neutral-800 p-4 md:p-8 rounded-md'>

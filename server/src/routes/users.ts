@@ -98,6 +98,7 @@ app.get('/:username', async (req: Request, res: Response) => {
         u.scores,
         u.user_type,
         u.created_at,
+        u.updated_at,
         COALESCE(s.top_score, 0) AS top_score,
         COALESCE(((top_score * u.scores) / 10000), 0) + 1 AS level,
         TRUNC(((COALESCE(((top_score::numeric * u.scores) / 10000), 0) + 1) - (COALESCE(((top_score * u.scores) / 10000), 0) + 1))*100::numeric, 2) AS exp_percent
