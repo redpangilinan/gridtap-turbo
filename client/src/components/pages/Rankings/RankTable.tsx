@@ -8,6 +8,8 @@ type TableData = {
   exp_percent: number;
   scores: number;
   top_score: number;
+  total_score: number;
+  user_rank: number;
   user_type: string;
 };
 
@@ -38,7 +40,10 @@ const RankTable: React.FC<RankTableProps> = ({ data }) => {
               Scores
             </th>
             <th scope='col' className='px-6 py-3'>
-              Top Score
+              Highest Score
+            </th>
+            <th scope='col' className='px-6 py-3'>
+              Total Score
             </th>
           </tr>
         </thead>
@@ -55,6 +60,9 @@ const RankTable: React.FC<RankTableProps> = ({ data }) => {
                   className='max-w-xs overflow-hidden inline-block truncate hover:text-neutral-100'
                 >
                   {user.username}
+                  {user.user_rank == 1 && (
+                    <Badge className='bg-yellow-200 text-yellow-700'>#1</Badge>
+                  )}
                   {user.user_type === 'admin' && <Badge>Dev</Badge>}
                 </Link>
               </td>
@@ -62,8 +70,9 @@ const RankTable: React.FC<RankTableProps> = ({ data }) => {
                 Lvl {user.level} - {user.exp_percent}%
               </td>
               <td className='px-6 py-4'>{user.scores}</td>
+              <td className='px-6 py-4'>{user.top_score}</td>
               <td className='px-6 py-4 font-medium whitespace-nowrap text-white'>
-                {user.top_score}
+                {user.total_score ?? '0'}
               </td>
             </tr>
           ))}

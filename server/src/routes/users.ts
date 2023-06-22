@@ -54,23 +54,24 @@ app.get('/', async (req: Request, res: Response) => {
     const client = await pool.connect();
 
     const query = `
-      SELECT 
-        u.user_id,
-        u.username,
-        u.email,
-        u.scores,
-        u.user_type,
-        COALESCE(s.top_score, 0) AS top_score,
-        COALESCE(((top_score * u.scores) / 10000), 0) + 1 AS level,
-        TRUNC(((COALESCE(((top_score::numeric * u.scores) / 10000), 0) + 1) - (COALESCE(((top_score * u.scores) / 10000), 0) + 1))*100::numeric, 2) AS exp_percent
-      FROM tb_users u
-      LEFT JOIN (
-        SELECT user_id, MAX(score) AS top_score
-        FROM tb_scores
-        GROUP BY user_id
-      ) s ON u.user_id = s.user_id
-      WHERE u.user_status = 'active'
-      ORDER BY top_score DESC, u.created_at`;
+    WITH user_scores AS (
+      SELECT user_id, SUM(score) AS total_score, MAX(score) AS top_score
+      FROM tb_scores
+      GROUP BY user_id
+    )
+    SELECT 
+      u.user_id,
+      u.username,
+      u.scores,
+      u.user_type,
+      COALESCE(s.top_score, 0) AS top_score,
+      COALESCE(((s.top_score * u.scores) / 10000), 0) + 1 AS level,
+      TRUNC(((COALESCE(((s.top_score::numeric * u.scores) / 10000), 0) + 1) - (COALESCE(((s.top_score * u.scores) / 10000), 0) + 1)) * 100::numeric, 2) AS exp_percent,
+      s.total_score,
+      RANK() OVER (ORDER BY COALESCE(s.total_score, -999999) DESC, u.created_at ASC) AS user_rank
+    FROM tb_users u
+    LEFT JOIN user_scores s ON u.user_id = s.user_id
+    WHERE u.user_status = 'active'`;
 
     const result = await client.query(query);
 
@@ -94,7 +95,6 @@ app.get('/:username', async (req: Request, res: Response) => {
       SELECT 
         u.user_id,
         u.username,
-        u.email,
         u.scores,
         u.user_type,
         u.created_at,
@@ -112,16 +112,43 @@ app.get('/:username', async (req: Request, res: Response) => {
     const userResult = await client.query(query, values);
 
     query = `
-      SELECT tb_scores.*
+      SELECT tb_scores.score, tb_scores.hits, tb_scores.miss, tb_scores.accuracy, tb_scores.max_combo, tb_scores.device, tb_scores.submitted_at
       FROM tb_scores
       JOIN tb_users ON tb_scores.user_id = tb_users.user_id
       WHERE tb_users.username = $1
-      ORDER BY tb_scores.score DESC;`;
+      ORDER BY tb_scores.score DESC`;
     const scoresResult = await client.query(query, values);
+
+    query = `
+    SELECT
+      SUM(hits) AS total_hits,
+      MAX(hits) AS highest_hits,
+      ROUND(AVG(accuracy), 2) AS average_acc,
+      SUM(score) AS total_score
+    FROM tb_scores
+    JOIN tb_users ON tb_scores.user_id = tb_users.user_id
+    WHERE tb_users.username = $1`;
+    const statsResult = await client.query(query, values);
+
+    query = `
+      SELECT user_rank
+      FROM (
+        SELECT user_id, username, RANK() OVER (ORDER BY COALESCE(total_score, -999999) DESC, created_at ASC) AS user_rank
+        FROM (
+          SELECT u.user_id, u.username, SUM(s.score) AS total_score, u.created_at
+          FROM tb_users u
+          LEFT JOIN tb_scores s ON u.user_id = s.user_id
+          GROUP BY u.user_id, u.username, u.created_at
+        ) AS user_scores
+      ) AS ranked_users
+      WHERE username = $1`;
+    const rankResult = await client.query(query, values);
 
     const response = {
       user: userResult.rows[0],
       scores: scoresResult.rows,
+      stats: statsResult.rows[0],
+      rank: rankResult.rows[0],
     };
 
     client.release();
