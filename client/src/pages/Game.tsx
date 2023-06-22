@@ -40,7 +40,7 @@ const Game = () => {
     device: device,
   };
 
-  const submit = useMutation({
+  const { status, mutate } = useMutation({
     mutationFn: submitScore,
     onSuccess: () => {
       setMessage('Submitted at ' + new Date().toLocaleDateString());
@@ -48,7 +48,7 @@ const Game = () => {
     onError: () => {
       refreshUserTokens()
         .then(() => {
-          submit.mutate(data);
+          mutate(data);
         })
         .catch(() => {
           setMessage('Login to submit scores!');
@@ -57,7 +57,7 @@ const Game = () => {
   });
 
   const openModal = () => {
-    submit.mutate(data);
+    mutate(data);
     setModalOpen(true);
   };
 
@@ -215,7 +215,7 @@ const Game = () => {
         maxCombo={maxCombo}
         hits={hits}
         miss={miss}
-        message={message}
+        message={status === 'loading' ? 'Submitting...' : message}
       />
     </div>
   );

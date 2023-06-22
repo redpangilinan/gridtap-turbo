@@ -12,15 +12,16 @@ type tokenData = {
 
 const Navbar: React.FC<tokenData> = ({ auth }) => {
   const [navbar, setNavbar] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [dropdown, setDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleDropdownClick = () => {
-    setDropdownOpen(!dropdownOpen);
+    setDropdown(!dropdown);
   };
 
   const handleClick = async () => {
     setNavbar(false);
+    setDropdown(false);
   };
 
   useEffect(() => {
@@ -29,7 +30,7 @@ const Navbar: React.FC<tokenData> = ({ auth }) => {
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
       ) {
-        setDropdownOpen(false);
+        setDropdown(false);
       }
     };
 
@@ -129,7 +130,7 @@ const Navbar: React.FC<tokenData> = ({ auth }) => {
                     {auth.decoded.username}
                   </span>
                   !
-                  {dropdownOpen && (
+                  {dropdown && (
                     <div className='absolute mt-2 z-10'>
                       <Dropdown
                         username={auth.decoded.username}
