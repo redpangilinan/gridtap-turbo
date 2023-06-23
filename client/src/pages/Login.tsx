@@ -16,12 +16,12 @@ type tokenData = {
   };
 };
 
-const Login: React.FC<tokenData> = (auth) => {
+const Login: React.FC<tokenData> = ({ auth }) => {
   const { register, handleSubmit } = useForm<Inputs>();
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  if (auth.auth) {
+  if (auth) {
     navigate('/');
   }
 

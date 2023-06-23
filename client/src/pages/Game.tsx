@@ -13,7 +13,16 @@ const generateUniqueIndices = () => {
   return Array.from(indices);
 };
 
-const Game = () => {
+type tokenData = {
+  auth: {
+    accessToken: string;
+    decoded: {
+      userId: number;
+    };
+  };
+};
+
+const Game: React.FC<tokenData> = ({ auth }) => {
   const [blackSquareIndices, setBlackSquareIndices] = useState<number[]>(
     generateUniqueIndices()
   );
@@ -41,14 +50,14 @@ const Game = () => {
   };
 
   const { status, mutate } = useMutation({
-    mutationFn: submitScore,
+    mutationFn: () => submitScore(data, auth),
     onSuccess: () => {
       setMessage('Submitted at ' + new Date().toLocaleDateString());
     },
     onError: () => {
       refreshUserTokens()
         .then(() => {
-          mutate(data);
+          mutate();
         })
         .catch(() => {
           setMessage('Login to submit scores!');
@@ -57,7 +66,7 @@ const Game = () => {
   });
 
   const openModal = () => {
-    mutate(data);
+    mutate();
     setModalOpen(true);
   };
 

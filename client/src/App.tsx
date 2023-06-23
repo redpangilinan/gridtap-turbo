@@ -34,7 +34,7 @@ const App = () => {
         <Route path='/login' element={<Login auth={token} />} />
         <Route path='/register' element={<Register auth={token} />} />
         <Route path='/rankings' element={<Rankings />} />
-        <Route path='/play' element={<Game />} />
+        <Route path='/play' element={<Game auth={token} />} />
         <Route path='/user/:username' element={<Profile />} />
       </Routes>
     </div>

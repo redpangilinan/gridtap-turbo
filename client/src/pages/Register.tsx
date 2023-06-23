@@ -18,7 +18,7 @@ type tokenData = {
   };
 };
 
-const Register: React.FC<tokenData> = (auth) => {
+const Register: React.FC<tokenData> = ({ auth }) => {
   const {
     register,
     handleSubmit,
@@ -28,7 +28,7 @@ const Register: React.FC<tokenData> = (auth) => {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  if (auth.auth) {
+  if (auth) {
     navigate('/');
   }
 

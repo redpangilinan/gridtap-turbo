@@ -9,6 +9,13 @@ type ScoreProps = {
   device: string;
 };
 
+type TokenProps = {
+  accessToken: string;
+  decoded: {
+    userId: number;
+  };
+};
+
 // Get all the users
 export const getUsers = () => {
   const apiUrl = `${import.meta.env.VITE_BASE_URL}/users`;
@@ -33,9 +40,22 @@ export const refreshUserTokens = () => {
   return axios.get(apiUrl, { withCredentials: true });
 };
 
+// Update account information
+export const updateUserInfo = (token: TokenProps) => {
+  const apiUrl = `${import.meta.env.VITE_BASE_URL}/users/${
+    token.decoded.userId
+  }`;
+  return axios
+    .put(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${token.accessToken}`,
+      },
+    })
+    .then((res) => res.data);
+};
+
 // Score submission
-export const submitScore = async (data: ScoreProps) => {
-  const token = await getUserTokens();
+export const submitScore = async (data: ScoreProps, token: TokenProps) => {
   const userId = token.decoded.userId;
   const jwtToken = token.accessToken;
   const postData = { ...data, userId };
