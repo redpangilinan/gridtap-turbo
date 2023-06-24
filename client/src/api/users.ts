@@ -1,5 +1,13 @@
 import axios from 'axios';
 
+type Inputs = {
+  username: string;
+  email: string;
+  oldPassword: string;
+  password: string;
+  confirmPassword: string;
+};
+
 type ScoreProps = {
   score: number;
   accuracy: number;
@@ -28,6 +36,12 @@ export const getUserByUsername = (username: string) => {
   return axios.get(apiUrl).then((res) => res.data);
 };
 
+// Get the user data to display for settings
+export const getUserSettings = (id: number) => {
+  const apiUrl = `${import.meta.env.VITE_BASE_URL}/users/settings/${id}`;
+  return axios.get(apiUrl).then((res) => res.data);
+};
+
 // Get user data from access token
 export const getUserTokens = () => {
   const apiUrl = `${import.meta.env.VITE_BASE_URL}/auth`;
@@ -41,12 +55,16 @@ export const refreshUserTokens = () => {
 };
 
 // Update account information
-export const updateUserInfo = (token: TokenProps) => {
-  const apiUrl = `${import.meta.env.VITE_BASE_URL}/users/${
+export const updateUserInfo = (
+  data: Inputs,
+  token: TokenProps,
+  section = 'info'
+) => {
+  const apiUrl = `${import.meta.env.VITE_BASE_URL}/users/${section}/${
     token.decoded.userId
   }`;
   return axios
-    .put(apiUrl, {
+    .put(apiUrl, data, {
       headers: {
         Authorization: `Bearer ${token.accessToken}`,
       },

@@ -8,21 +8,20 @@ import Register from './pages/Register';
 import Game from './pages/Game';
 import Rankings from './pages/Rankings';
 import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 
 const App = () => {
   const { data: token, refetch } = useQuery({
     queryKey: ['auth'],
     queryFn: getUserTokens,
-    staleTime: 300000,
     retry: false,
-    onError: () => {
-      refreshUserTokens()
-        .then(() => {
-          refetch();
-        })
-        .catch((error) => {
-          console.error('Failed to refresh tokens:', error);
-        });
+    onError: async () => {
+      try {
+        await refreshUserTokens();
+        refetch();
+      } catch (error) {
+        console.error('Failed to refresh tokens:', error);
+      }
     },
   });
 
@@ -31,11 +30,12 @@ const App = () => {
       <Navbar auth={token} />
       <Routes>
         <Route path='/' element={<Home />} />
+        <Route path='/rankings' element={<Rankings />} />
+        <Route path='/user/:username' element={<Profile />} />
         <Route path='/login' element={<Login auth={token} />} />
         <Route path='/register' element={<Register auth={token} />} />
-        <Route path='/rankings' element={<Rankings />} />
         <Route path='/play' element={<Game auth={token} />} />
-        <Route path='/user/:username' element={<Profile />} />
+        <Route path='/settings' element={<Settings auth={token} />} />
       </Routes>
     </div>
   );

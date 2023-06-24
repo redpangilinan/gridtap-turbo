@@ -49,19 +49,18 @@ const Game: React.FC<tokenData> = ({ auth }) => {
     device: device,
   };
 
-  const { status, mutate } = useMutation({
+  const { status, mutate, mutateAsync } = useMutation({
     mutationFn: () => submitScore(data, auth),
     onSuccess: () => {
       setMessage('Submitted at ' + new Date().toLocaleDateString());
     },
-    onError: () => {
-      refreshUserTokens()
-        .then(() => {
-          mutate();
-        })
-        .catch(() => {
-          setMessage('Login to submit scores!');
-        });
+    onError: async () => {
+      try {
+        await refreshUserTokens();
+        await mutateAsync();
+      } catch (error) {
+        setMessage('Login to submit scores!');
+      }
     },
   });
 

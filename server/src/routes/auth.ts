@@ -46,6 +46,11 @@ app.get('/refresh', async (req: Request, res: Response) => {
         process.env.REFRESH_TOKEN_SECRET
       );
 
+      const client = await pool.connect();
+      const query = `UPDATE tb_users SET updated_at = NOW() WHERE username = $1 RETURNING *`;
+      const result = await client.query(query, [decoded.username]);
+      client.release();
+
       const accessToken = jwt.sign(
         {
           userId: decoded.userId,
@@ -57,11 +62,6 @@ app.get('/refresh', async (req: Request, res: Response) => {
           expiresIn: '15m',
         }
       );
-
-      const client = await pool.connect();
-      const query = `UPDATE tb_users SET updated_at = NOW() WHERE username = $1 RETURNING *`;
-      const result = await client.query(query, [decoded.username]);
-      client.release();
 
       res
         .status(200)

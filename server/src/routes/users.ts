@@ -4,6 +4,7 @@ import { pool } from '../db';
 import bcrypt from 'bcrypt';
 import validateToken from '../middleware/validateToken';
 import cookieParser from 'cookie-parser';
+import jwt from 'jsonwebtoken';
 
 const app = express.Router();
 
@@ -160,28 +161,117 @@ app.get('/:username', async (req: Request, res: Response) => {
   }
 });
 
-// Update user by ID
-app.put('/:id', validateToken('any'), async (req: Request, res: Response) => {
+// Fetch user data by ID to display for settings
+app.get('/settings/:id', async (req: Request, res: Response) => {
   try {
     const client = await pool.connect();
 
     const { id } = req.params;
-    const { username, password } = req.body;
-    const query = `
-      UPDATE tb_users
-      SET username = $1, password = $2
-      WHERE user_id = $3
-      RETURNING *`;
-    const values = [username, password, id];
+    const values = [id];
+
+    let query = `SELECT username, email FROM tb_users WHERE user_id = $1 AND user_status = 'active'`;
     const result = await client.query(query, values);
 
     client.release();
     res.json(result.rows[0]);
   } catch (err) {
-    console.error('Error updating user', err);
-    res.status(500).json({ error: 'Failed to update user' });
+    console.error('Error fetching user', err);
+    res.status(500).json({ error: 'Error fetching user' });
   }
 });
+
+// Update user info by ID
+app.put(
+  '/:section/:id',
+  validateToken('any'),
+  async (req: Request, res: Response) => {
+    try {
+      const client = await pool.connect();
+
+      const { section, id } = req.params;
+      const { username, email, oldPassword, password } = req.body;
+
+      let query = `UPDATE tb_users SET username = $1, email = $2 WHERE user_id = $3 RETURNING *`;
+      let values = [username, email, id];
+      if (section === 'password') {
+        // Fetch the user's current password
+        const fetchQuery = `SELECT password FROM tb_users WHERE user_id = $1`;
+        const fetchResult = await pool.query(fetchQuery, [id]);
+
+        if (fetchResult.rows.length === 0) {
+          client.release();
+          return res.status(404).json({ error: 'User not found' });
+        }
+
+        const storedPassword = fetchResult.rows[0].password;
+        const passwordMatch = await bcrypt.compare(oldPassword, storedPassword);
+
+        if (!passwordMatch) {
+          client.release();
+          return res.status(401).json({ error: 'Old password does not match' });
+        }
+
+        // Update password if old password matches
+        query = `UPDATE tb_users SET password = $1 WHERE user_id = $2 RETURNING *`;
+        if (password.length < 6) {
+          client.release();
+          return res
+            .status(401)
+            .json({ error: 'Password should be at least 6 characters long' });
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        values = [hashedPassword, id];
+      }
+
+      let result = await client.query(query, values);
+
+      query = `SELECT * FROM tb_users WHERE user_id = $1 AND user_status = 'active'`;
+      result = await client.query(query, [id]);
+      const user = result.rows[0];
+
+      client.release();
+
+      const accessToken = jwt.sign(
+        {
+          userId: user.user_id,
+          username: user.username,
+          userType: user.user_type,
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+          expiresIn: '15m',
+        }
+      );
+
+      const refreshToken = jwt.sign(
+        {
+          userId: user.user_id,
+          username: user.username,
+          userType: user.user_type,
+        },
+        process.env.REFRESH_TOKEN_SECRET
+      );
+
+      res
+        .status(200)
+        .cookie('accessToken', accessToken, {
+          sameSite: 'strict',
+          path: '/',
+          expires: new Date(new Date().getTime() + 60 * 60 * 1000),
+          httpOnly: true,
+        })
+        .cookie('refreshToken', refreshToken, {
+          sameSite: 'strict',
+          path: '/',
+          httpOnly: true,
+        })
+        .json({ accessToken: accessToken, refreshToken: refreshToken });
+    } catch (err) {
+      console.error('Error updating user', err);
+      res.status(500).json({ error: 'Failed to update user' });
+    }
+  }
+);
 
 // Delete user by ID
 app.delete(
