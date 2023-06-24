@@ -60,10 +60,6 @@ const Settings: React.FC<TokenData> = ({ auth }) => {
     },
   });
 
-  if (!auth) {
-    navigate('/login');
-  }
-
   // Update account information
   const updateInfo = useMutation({
     mutationFn: () => updateUserInfo(infoInputData, auth),
@@ -113,6 +109,10 @@ const Settings: React.FC<TokenData> = ({ auth }) => {
     }
     return true;
   };
+
+  if (!auth) {
+    navigate('/login');
+  }
 
   return (
     <>
