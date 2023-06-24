@@ -25,8 +25,8 @@ type TokenProps = {
 };
 
 // Get all the users
-export const getUsers = () => {
-  const apiUrl = `${import.meta.env.VITE_BASE_URL}/users`;
+export const getUsers = (page: number) => {
+  const apiUrl = `${import.meta.env.VITE_BASE_URL}/users?page=${page}&limit=50`;
   return axios.get(apiUrl).then((res) => res.data);
 };
 

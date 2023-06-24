@@ -49,35 +49,68 @@ app.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// Select all active users for leaderboards
 app.get('/', async (req: Request, res: Response) => {
   try {
     const client = await pool.connect();
 
+    const limit = parseInt(req.query.limit as string) || 10;
+    let page = parseInt(req.query.page as string) || 1;
+
+    const countQuery = `
+      SELECT COUNT(*) as total_count
+      FROM tb_users
+      WHERE user_status = 'active'
+    `;
+
+    const countResult = await client.query(countQuery);
+    const totalCount = parseInt(countResult.rows[0].total_count);
+    const totalPages = Math.ceil(totalCount / limit);
+
+    if (page < 1) {
+      page = 1;
+    }
+
+    if (page > totalPages) {
+      page = totalPages;
+    }
+
+    const offset = (page - 1) * limit;
+
     const query = `
-    WITH user_scores AS (
-      SELECT user_id, SUM(score) AS total_score, MAX(score) AS top_score
-      FROM tb_scores
-      GROUP BY user_id
-    )
-    SELECT 
-      u.user_id,
-      u.username,
-      u.scores,
-      u.user_type,
-      COALESCE(s.top_score, 0) AS top_score,
-      COALESCE(((s.top_score * u.scores) / 10000), 0) + 1 AS level,
-      TRUNC(((COALESCE(((s.top_score::numeric * u.scores) / 10000), 0) + 1) - (COALESCE(((s.top_score * u.scores) / 10000), 0) + 1)) * 100::numeric, 2) AS exp_percent,
-      s.total_score,
-      RANK() OVER (ORDER BY COALESCE(s.total_score, -999999) DESC, u.created_at ASC) AS user_rank
-    FROM tb_users u
-    LEFT JOIN user_scores s ON u.user_id = s.user_id
-    WHERE u.user_status = 'active'`;
+      WITH user_scores AS (
+        SELECT user_id, SUM(score) AS total_score, MAX(score) AS top_score
+        FROM tb_scores
+        GROUP BY user_id
+      )
+      SELECT 
+        u.user_id,
+        u.username,
+        u.scores,
+        u.user_type,
+        COALESCE(s.top_score, 0) AS top_score,
+        COALESCE(((s.top_score * u.scores) / (5000 + (s.top_score + u.scores))), 0) + 1 AS level,
+        TRUNC(((COALESCE(((s.top_score::numeric * u.scores) / (5000 + (s.top_score + u.scores))), 0) + 1) - (COALESCE(((s.top_score * u.scores) / (5000 + (s.top_score + u.scores))), 0) + 1)) * 100::numeric, 2) AS exp_percent,
+        s.total_score,
+        RANK() OVER (ORDER BY COALESCE(s.total_score, -999999) DESC, u.created_at ASC) AS user_rank
+      FROM tb_users u
+      LEFT JOIN user_scores s ON u.user_id = s.user_id
+      WHERE u.user_status = 'active'
+      ORDER BY user_rank ASC
+      LIMIT ${limit}
+      OFFSET ${offset}`;
 
     const result = await client.query(query);
 
     client.release();
-    res.json(result.rows);
+
+    res.json({
+      data: result.rows,
+      pagination: {
+        currentPage: page,
+        totalPages: totalPages,
+        totalCount: totalCount,
+      },
+    });
   } catch (err) {
     console.error('Error fetching users', err);
     res.status(500).json({ error: 'Error fetching users' });
@@ -101,8 +134,8 @@ app.get('/:username', async (req: Request, res: Response) => {
         u.created_at,
         u.updated_at,
         COALESCE(s.top_score, 0) AS top_score,
-        COALESCE(((top_score * u.scores) / 10000), 0) + 1 AS level,
-        TRUNC(((COALESCE(((top_score::numeric * u.scores) / 10000), 0) + 1) - (COALESCE(((top_score * u.scores) / 10000), 0) + 1))*100::numeric, 2) AS exp_percent
+        COALESCE(((top_score * u.scores) / (5000 + (s.top_score + u.scores))), 0) + 1 AS level,
+        TRUNC(((COALESCE(((top_score::numeric * u.scores) / (5000 + (s.top_score + u.scores))), 0) + 1) - (COALESCE(((top_score * u.scores) / (5000 + (s.top_score + u.scores))), 0) + 1))*100::numeric, 2) AS exp_percent
       FROM tb_users u
       LEFT JOIN (
         SELECT user_id, MAX(score) AS top_score

@@ -14,11 +14,13 @@ type TableData = {
 };
 
 type RankTableProps = {
-  data: TableData[];
+  data: {
+    data: TableData[];
+  };
 };
 
 const RankTable: React.FC<RankTableProps> = ({ data }) => {
-  if (data.length <= 0) {
+  if (data.data.length <= 0) {
     return <div>No users</div>;
   }
 
@@ -48,7 +50,7 @@ const RankTable: React.FC<RankTableProps> = ({ data }) => {
           </tr>
         </thead>
         <tbody className='bg-neutral-800 divide-y divide-neutral-700'>
-          {data.map((user, index) => (
+          {data.data.map((user, index) => (
             <tr
               key={user.user_id}
               className=' border-b bg-neutral-800 border-neutral-700 hover:bg-neutral-600'
@@ -67,7 +69,7 @@ const RankTable: React.FC<RankTableProps> = ({ data }) => {
                 </Link>
               </td>
               <td className='px-6 py-4'>
-                Lvl {user.level} - {user.exp_percent}%
+                Lv.{user.level} - {user.exp_percent}%
               </td>
               <td className='px-6 py-4'>{user.scores}</td>
               <td className='px-6 py-4'>{user.top_score}</td>

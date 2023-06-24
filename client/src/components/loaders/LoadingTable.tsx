@@ -19,6 +19,12 @@ const LoadingTable = () => {
             <th scope='col' className='px-6 py-3'>
               Scores
             </th>
+            <th scope='col' className='px-6 py-3'>
+              Highest Score
+            </th>
+            <th scope='col' className='px-6 py-3'>
+              Total Score
+            </th>
           </tr>
         </thead>
         <tbody className='bg-neutral-800 divide-y divide-neutral-700'>
@@ -39,6 +45,22 @@ const LoadingTable = () => {
                 <Skeleton
                   className='animate-pulse'
                   width={150}
+                  height={15}
+                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
+                />
+              </td>
+              <td className='px-6 py-4'>
+                <Skeleton
+                  className='animate-pulse'
+                  width={30}
+                  height={15}
+                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
+                />
+              </td>
+              <td className='px-6 py-4'>
+                <Skeleton
+                  className='animate-pulse'
+                  width={30}
                   height={15}
                   style={{ backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
                 />
