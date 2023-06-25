@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import ErrorMessage from '../components/common/ErrorMessage';
 import { login } from '../api/authentication';
 
@@ -31,8 +32,12 @@ const Login: React.FC<tokenData> = ({ auth }) => {
     onSuccess: () => {
       navigate(0);
     },
-    onError: () => {
-      setMessage('Your username or password is incorrect!');
+    onError: (error: AxiosError) => {
+      if (error.response?.status === 500) {
+        setMessage('Your username or password is incorrect!');
+      } else {
+        setMessage('Connection failed! Please try again later.');
+      }
     },
   });
 

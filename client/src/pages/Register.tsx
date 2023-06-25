@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { login, signup } from '../api/authentication';
 import ErrorMessage from '../components/common/ErrorMessage';
 
@@ -49,8 +50,12 @@ const Register: React.FC<tokenData> = ({ auth }) => {
       loginUser.mutate(variables);
       console.log(data);
     },
-    onError: () => {
-      setMessage('Username or email is already taken!');
+    onError: (error: AxiosError) => {
+      if (error.response?.status === 500) {
+        setMessage('Username or email is already taken!');
+      } else {
+        setMessage('Connection failed! Please try again later.');
+      }
     },
   });
 
