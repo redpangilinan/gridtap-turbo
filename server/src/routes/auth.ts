@@ -91,7 +91,7 @@ app.post('/login', async (req, res) => {
 
     if (result.rows.length === 0) {
       client.release();
-      return res.status(401).json({ error: 'Invalid username or password' });
+      return res.status(500).json({ error: 'Invalid username or password' });
     }
 
     const user = result.rows[0];
@@ -99,7 +99,7 @@ app.post('/login', async (req, res) => {
 
     if (!passwordMatch) {
       client.release();
-      return res.status(401).json({ error: 'Invalid username or password' });
+      return res.status(500).json({ error: 'Invalid username or password' });
     }
 
     query = `UPDATE tb_users SET updated_at = NOW() WHERE username = $1 RETURNING *`;

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { updateUserInfo, getUserSettings } from '../api/users';
 import ErrorMessage from '../components/common/ErrorMessage';
 
@@ -63,12 +64,14 @@ const Settings: React.FC<TokenData> = ({ auth, refreshToken }) => {
     onSuccess: () => {
       navigate(0);
     },
-    onError: () => {
-      try {
-        refreshToken();
-        updateInfo.mutate();
-      } catch (error) {
+    onError: (error: AxiosError) => {
+      if (error.response?.status === 500) {
         setMessage('Username or email is already taken!');
+      } else {
+        if (auth) {
+          refreshToken();
+          updateInfo.mutate();
+        }
       }
     },
   });
@@ -79,12 +82,14 @@ const Settings: React.FC<TokenData> = ({ auth, refreshToken }) => {
     onSuccess: () => {
       navigate(0);
     },
-    onError: async () => {
-      try {
-        refreshToken();
-        updatePass.mutate();
-      } catch (error) {
+    onError: (error: AxiosError) => {
+      if (error.response?.status === 500) {
         setMessagePass('Your password is incorrect!');
+      } else {
+        if (auth) {
+          refreshToken();
+          updatePass.mutate();
+        }
       }
     },
   });

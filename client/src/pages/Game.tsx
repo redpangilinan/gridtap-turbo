@@ -56,11 +56,10 @@ const Game: React.FC<tokenData> = ({ auth, refreshToken }) => {
       setMessage('Submitted at ' + new Date().toLocaleDateString());
     },
     onError: () => {
-      try {
+      setMessage('Login to submit scores!');
+      if (auth) {
         refreshToken();
         mutate();
-      } catch (error) {
-        setMessage('Login to submit scores!');
       }
     },
   });

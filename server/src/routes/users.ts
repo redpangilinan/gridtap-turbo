@@ -241,7 +241,7 @@ app.put(
 
         if (!passwordMatch) {
           client.release();
-          return res.status(401).json({ error: 'Old password does not match' });
+          return res.status(500).json({ error: 'Old password does not match' });
         }
 
         // Update password if old password matches
@@ -249,7 +249,7 @@ app.put(
         if (password.length < 6) {
           client.release();
           return res
-            .status(401)
+            .status(500)
             .json({ error: 'Password should be at least 6 characters long' });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
