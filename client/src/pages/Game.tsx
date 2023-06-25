@@ -3,7 +3,7 @@ import Tiles from '../components/pages/Game/Tiles';
 import ScoreBar from '../components/pages/Game/ScoreBar';
 import ScoreModal from '../components/pages/Game/ScoreModal';
 import { useMutation } from '@tanstack/react-query';
-import { submitScore, refreshUserTokens } from '../api/users';
+import { submitScore } from '../api/users';
 
 const generateUniqueIndices = () => {
   const indices = new Set<number>();
@@ -20,9 +20,10 @@ type tokenData = {
       userId: number;
     };
   };
+  refreshToken: () => void;
 };
 
-const Game: React.FC<tokenData> = ({ auth }) => {
+const Game: React.FC<tokenData> = ({ auth, refreshToken }) => {
   const [blackSquareIndices, setBlackSquareIndices] = useState<number[]>(
     generateUniqueIndices()
   );
@@ -49,15 +50,15 @@ const Game: React.FC<tokenData> = ({ auth }) => {
     device: device,
   };
 
-  const { status, mutate, mutateAsync } = useMutation({
+  const { status, mutate } = useMutation({
     mutationFn: () => submitScore(data, auth),
     onSuccess: () => {
       setMessage('Submitted at ' + new Date().toLocaleDateString());
     },
-    onError: async () => {
+    onError: () => {
       try {
-        await refreshUserTokens();
-        await mutateAsync();
+        refreshToken();
+        mutate();
       } catch (error) {
         setMessage('Login to submit scores!');
       }
@@ -224,6 +225,7 @@ const Game: React.FC<tokenData> = ({ auth }) => {
         hits={hits}
         miss={miss}
         message={status === 'loading' ? 'Submitting...' : message}
+        onMutate={mutate}
       />
     </div>
   );

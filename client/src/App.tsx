@@ -25,6 +25,10 @@ const App = () => {
     },
   });
 
+  const refreshToken = () => {
+    refetch();
+  };
+
   return (
     <div className='flex flex-col min-h-screen bg-neutral-900 text-neutral-300'>
       <Navbar auth={token} />
@@ -34,8 +38,14 @@ const App = () => {
         <Route path='/user/:username' element={<Profile />} />
         <Route path='/login' element={<Login auth={token} />} />
         <Route path='/register' element={<Register auth={token} />} />
-        <Route path='/play' element={<Game auth={token} />} />
-        <Route path='/settings' element={<Settings auth={token} />} />
+        <Route
+          path='/play'
+          element={<Game auth={token} refreshToken={refreshToken} />}
+        />
+        <Route
+          path='/settings'
+          element={<Settings auth={token} refreshToken={refreshToken} />}
+        />
       </Routes>
     </div>
   );

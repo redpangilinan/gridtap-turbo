@@ -3,11 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
-import {
-  updateUserInfo,
-  refreshUserTokens,
-  getUserSettings,
-} from '../api/users';
+import { updateUserInfo, getUserSettings } from '../api/users';
 import ErrorMessage from '../components/common/ErrorMessage';
 
 type Inputs = {
@@ -25,9 +21,10 @@ type TokenData = {
       userId: number;
     };
   };
+  refreshToken: () => void;
 };
 
-const Settings: React.FC<TokenData> = ({ auth }) => {
+const Settings: React.FC<TokenData> = ({ auth, refreshToken }) => {
   const [infoInputData, setInfoInputData] = useState<Inputs>({} as Inputs);
   const [passwordInputData, setPasswordInputData] = useState<Inputs>(
     {} as Inputs
@@ -66,10 +63,10 @@ const Settings: React.FC<TokenData> = ({ auth }) => {
     onSuccess: () => {
       navigate(0);
     },
-    onError: async () => {
+    onError: () => {
       try {
-        await refreshUserTokens();
-        await updateInfo.mutateAsync();
+        refreshToken();
+        updateInfo.mutate();
       } catch (error) {
         setMessage('Username or email is already taken!');
       }
@@ -84,8 +81,8 @@ const Settings: React.FC<TokenData> = ({ auth }) => {
     },
     onError: async () => {
       try {
-        await refreshUserTokens();
-        await updatePass.mutateAsync();
+        refreshToken();
+        updatePass.mutate();
       } catch (error) {
         setMessagePass('Your password is incorrect!');
       }

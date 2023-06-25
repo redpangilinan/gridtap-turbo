@@ -1,3 +1,5 @@
+import { refreshUserTokens } from '../../../api/users';
+
 type ScoreProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -7,6 +9,7 @@ type ScoreProps = {
   hits: number;
   miss: number;
   message: string;
+  onMutate: () => void;
 };
 
 const Modal: React.FC<ScoreProps> = ({
@@ -18,7 +21,12 @@ const Modal: React.FC<ScoreProps> = ({
   hits,
   miss,
   message,
+  onMutate,
 }) => {
+  const handleMutate = async () => {
+    await refreshUserTokens().then(() => onMutate());
+  };
+
   if (!isOpen) {
     return null;
   }
@@ -73,7 +81,14 @@ const Modal: React.FC<ScoreProps> = ({
               <span className='text-lg font-semibold'>{maxCombo}</span>
             </div>
           </div>
-          <div className='overflow-hidden'>{message}</div>
+          <div className='overflow-hidden'>
+            {message}{' '}
+            {message === 'Login to submit scores!' && (
+              <button onClick={handleMutate} className='text-blue-300'>
+                Re-submit score
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
