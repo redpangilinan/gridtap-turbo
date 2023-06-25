@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { AxiosError } from 'axios';
 import Tiles from '../components/pages/Game/Tiles';
 import ScoreBar from '../components/pages/Game/ScoreBar';
 import ScoreModal from '../components/pages/Game/ScoreModal';
@@ -55,9 +56,12 @@ const Game: React.FC<tokenData> = ({ auth, refreshToken }) => {
     onSuccess: () => {
       setMessage('Submitted at ' + new Date().toLocaleDateString());
     },
-    onError: () => {
+    onError: (error: AxiosError) => {
       setMessage('Login to submit scores!');
-      if (auth) {
+      if (error.response?.status === 403) {
+        setMessage('Your account is restricted!');
+      }
+      if (auth && error.response?.status != 403) {
         refreshToken();
         mutate();
       }
