@@ -28,7 +28,7 @@ const LoadingTable = () => {
           </tr>
         </thead>
         <tbody className='bg-neutral-800 divide-y divide-neutral-700'>
-          {Array.from({ length: 10 }).map((_, index) => (
+          {Array.from({ length: 25 }).map((_, index) => (
             <tr
               key={index}
               className='border-b bg-neutral-800 border-neutral-700 hover:bg-neutral-600'
