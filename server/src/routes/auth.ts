@@ -70,7 +70,6 @@ app.get('/refresh', async (req: Request, res: Response) => {
           path: '/',
           expires: new Date(new Date().getTime() + 60 * 60 * 1000),
           httpOnly: true,
-          domain: process.env.DOMAIN,
         })
         .json(result);
     } catch (error) {
@@ -135,13 +134,11 @@ app.post('/login', async (req, res) => {
         path: '/',
         expires: new Date(new Date().getTime() + 60 * 60 * 1000),
         httpOnly: true,
-        domain: process.env.DOMAIN,
       })
       .cookie('refreshToken', refreshToken, {
         sameSite: 'strict',
         path: '/',
         httpOnly: true,
-        domain: process.env.DOMAIN,
       })
       .json({ accessToken: accessToken, refreshToken: refreshToken });
   } catch (err) {
