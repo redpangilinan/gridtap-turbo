@@ -29,6 +29,13 @@ const Home = () => {
                 height={15}
                 style={{ backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
               />
+            ) : status === 'error' ? (
+              <Skeleton
+                className='animate-pulse'
+                width={40}
+                height={15}
+                style={{ backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
+              />
             ) : (
               Number(data.user_count?.total_count).toLocaleString()
             )}
@@ -44,6 +51,13 @@ const Home = () => {
                 height={15}
                 style={{ backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
               />
+            ) : status === 'error' ? (
+              <Skeleton
+                className='animate-pulse'
+                width={40}
+                height={15}
+                style={{ backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
+              />
             ) : (
               Number(data.active_users?.online_users).toLocaleString()
             )}
@@ -53,6 +67,13 @@ const Home = () => {
           <p className='text-sm text-neutral-400'>Highest Score</p>
           <span className='text-xl'>
             {status === 'loading' ? (
+              <Skeleton
+                className='animate-pulse'
+                width={40}
+                height={15}
+                style={{ backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
+              />
+            ) : status === 'error' ? (
               <Skeleton
                 className='animate-pulse'
                 width={40}
