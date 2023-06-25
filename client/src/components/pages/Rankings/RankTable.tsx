@@ -71,10 +71,14 @@ const RankTable: React.FC<RankTableProps> = ({ data }) => {
               <td className='px-6 py-4'>
                 Lv.{user.level} - {user.exp_percent}%
               </td>
-              <td className='px-6 py-4'>{user.scores}</td>
-              <td className='px-6 py-4'>{user.top_score}</td>
+              <td className='px-6 py-4'>
+                {Number(user.scores).toLocaleString()}
+              </td>
+              <td className='px-6 py-4'>
+                {Number(user.top_score).toLocaleString()}
+              </td>
               <td className='px-6 py-4 font-medium whitespace-nowrap text-white'>
-                {user.total_score ?? '0'}
+                {Number(user.total_score).toLocaleString() ?? 1}
               </td>
             </tr>
           ))}

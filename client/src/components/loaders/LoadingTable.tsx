@@ -76,7 +76,7 @@ const LoadingTable = () => {
               <td className='px-6 py-4'>
                 <Skeleton
                   className='animate-pulse'
-                  width={30}
+                  width={50}
                   height={15}
                   style={{ backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
                 />

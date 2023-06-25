@@ -42,6 +42,12 @@ export const getUserSettings = (id: number) => {
   return axios.get(apiUrl).then((res) => res.data);
 };
 
+// Get user statistics to be shown in homepage
+export const getUserCount = () => {
+  const apiUrl = `${import.meta.env.VITE_BASE_URL}/users/stats`;
+  return axios.get(apiUrl).then((res) => res.data);
+};
+
 // Get user data from access token
 export const getUserTokens = () => {
   const apiUrl = `${import.meta.env.VITE_BASE_URL}/auth`;

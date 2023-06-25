@@ -44,27 +44,33 @@ const ProfilePage: React.FC<ProfileProps> = ({ data }) => {
           <ExpBar lvl={data.user.level} exp={data.user.exp_percent} />
           <div className='flex'>
             <div className='flex-1'>Total Score</div>
-            <div className='flex-1'>{data.stats.total_score ?? '0'}</div>
+            <div className='flex-1'>
+              {Number(data.stats.total_score).toLocaleString() ?? 0}
+            </div>
           </div>
           <div className='flex'>
             <div className='flex-1'>Highest Score</div>
-            <div className='flex-1'>{data.user.top_score ?? '0'}</div>
+            <div className='flex-1'>{data.user.top_score ?? 0}</div>
           </div>
           <div className='flex'>
             <div className='flex-1'>Scores</div>
-            <div className='flex-1'>{data.user.scores ?? '0'}</div>
+            <div className='flex-1'>
+              {Number(data.user.scores).toLocaleString() ?? 0}
+            </div>
           </div>
           <div className='flex'>
             <div className='flex-1'>Average Acc</div>
-            <div className='flex-1'>{data.stats.average_acc ?? '0'}%</div>
+            <div className='flex-1'>{Number(data.stats.average_acc) ?? 0}%</div>
           </div>
           <div className='flex'>
             <div className='flex-1'>Total Hits</div>
-            <div className='flex-1'>{data.stats.total_hits ?? '0'}</div>
+            <div className='flex-1'>
+              {Number(data.stats.total_hits).toLocaleString() ?? 0}
+            </div>
           </div>
           <div className='flex'>
             <div className='flex-1'>Highest Hits</div>
-            <div className='flex-1'>{data.stats.highest_hits ?? '0'}</div>
+            <div className='flex-1'>{data.stats.highest_hits ?? 0}</div>
           </div>
           <div className='text-neutral-400 flex flex-col-reverse md:flex-row justify-between mt-4'>
             Joined{' '}

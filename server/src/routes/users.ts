@@ -117,83 +117,6 @@ app.get('/', async (req: Request, res: Response) => {
   }
 });
 
-// Select user by username
-app.get('/:username', async (req: Request, res: Response) => {
-  try {
-    const client = await pool.connect();
-
-    const { username } = req.params;
-    const values = [username];
-
-    let query = `
-      SELECT 
-        u.user_id,
-        u.username,
-        u.scores,
-        u.user_type,
-        u.created_at,
-        u.updated_at,
-        COALESCE(s.top_score, 0) AS top_score,
-        COALESCE(((top_score * u.scores) / (5000 + (s.top_score + u.scores))), 0) + 1 AS level,
-        TRUNC(((COALESCE(((top_score::numeric * u.scores) / (5000 + (s.top_score + u.scores))), 0) + 1) - (COALESCE(((top_score * u.scores) / (5000 + (s.top_score + u.scores))), 0) + 1))*100::numeric, 2) AS exp_percent
-      FROM tb_users u
-      LEFT JOIN (
-        SELECT user_id, MAX(score) AS top_score
-        FROM tb_scores
-        GROUP BY user_id
-      ) s ON u.user_id = s.user_id
-      WHERE u.username = $1
-      AND u.user_status = 'active'`;
-    const userResult = await client.query(query, values);
-
-    query = `
-      SELECT tb_scores.score, tb_scores.hits, tb_scores.miss, tb_scores.accuracy, tb_scores.max_combo, tb_scores.device, tb_scores.submitted_at
-      FROM tb_scores
-      JOIN tb_users ON tb_scores.user_id = tb_users.user_id
-      WHERE tb_users.username = $1
-      ORDER BY tb_scores.score DESC`;
-    const scoresResult = await client.query(query, values);
-
-    query = `
-    SELECT
-      SUM(hits) AS total_hits,
-      MAX(hits) AS highest_hits,
-      ROUND(AVG(accuracy), 2) AS average_acc,
-      SUM(score) AS total_score
-    FROM tb_scores
-    JOIN tb_users ON tb_scores.user_id = tb_users.user_id
-    WHERE tb_users.username = $1`;
-    const statsResult = await client.query(query, values);
-
-    query = `
-      SELECT user_rank
-      FROM (
-        SELECT user_id, username, RANK() OVER (ORDER BY COALESCE(total_score, -999999) DESC, created_at ASC) AS user_rank
-        FROM (
-          SELECT u.user_id, u.username, SUM(s.score) AS total_score, u.created_at
-          FROM tb_users u
-          LEFT JOIN tb_scores s ON u.user_id = s.user_id
-          GROUP BY u.user_id, u.username, u.created_at
-        ) AS user_scores
-      ) AS ranked_users
-      WHERE username = $1`;
-    const rankResult = await client.query(query, values);
-
-    const response = {
-      user: userResult.rows[0],
-      scores: scoresResult.rows,
-      stats: statsResult.rows[0],
-      rank: rankResult.rows[0],
-    };
-
-    client.release();
-    res.json(response);
-  } catch (err) {
-    console.error('Error fetching user', err);
-    res.status(500).json({ error: 'Error fetching user' });
-  }
-});
-
 // Fetch user data by ID to display for settings
 app.get('/settings/:id', async (req: Request, res: Response) => {
   try {
@@ -331,5 +254,117 @@ app.delete(
     }
   }
 );
+
+app.get('/stats', async (req: Request, res: Response) => {
+  try {
+    const client = await pool.connect();
+
+    let query = `
+      SELECT COUNT(*) as total_count
+      FROM tb_users
+      WHERE user_status = 'active'`;
+    const countResult = await client.query(query);
+
+    query = `
+      SELECT COUNT(*) AS online_users
+      FROM tb_users
+      WHERE updated_at >= NOW() - INTERVAL '15 minutes'
+      AND user_status = 'active'`;
+    const activeResult = await client.query(query);
+
+    query = `SELECT MAX(score) AS top_score from tb_scores`;
+    const scoreResult = await client.query(query);
+
+    const response = {
+      user_count: countResult.rows[0],
+      active_users: activeResult.rows[0],
+      highest_score: scoreResult.rows[0],
+    };
+
+    client.release();
+
+    res.json(response);
+  } catch (err) {
+    console.error('Error fetching stats', err);
+    res.status(500).json({ error: 'Error fetching stats' });
+  }
+});
+
+// Select user by username
+app.get('/:username', async (req: Request, res: Response) => {
+  try {
+    const client = await pool.connect();
+
+    const { username } = req.params;
+    const values = [username];
+
+    let query = `
+      SELECT 
+        u.user_id,
+        u.username,
+        u.scores,
+        u.user_type,
+        u.created_at,
+        u.updated_at,
+        COALESCE(s.top_score, 0) AS top_score,
+        COALESCE(((top_score * u.scores) / (5000 + (s.top_score + u.scores))), 0) + 1 AS level,
+        TRUNC(((COALESCE(((top_score::numeric * u.scores) / (5000 + (s.top_score + u.scores))), 0) + 1) - (COALESCE(((top_score * u.scores) / (5000 + (s.top_score + u.scores))), 0) + 1))*100::numeric, 2) AS exp_percent
+      FROM tb_users u
+      LEFT JOIN (
+        SELECT user_id, MAX(score) AS top_score
+        FROM tb_scores
+        GROUP BY user_id
+      ) s ON u.user_id = s.user_id
+      WHERE u.username = $1
+      AND u.user_status = 'active'`;
+    const userResult = await client.query(query, values);
+
+    query = `
+      SELECT tb_scores.score, tb_scores.hits, tb_scores.miss, tb_scores.accuracy, tb_scores.max_combo, tb_scores.device, tb_scores.submitted_at
+      FROM tb_scores
+      JOIN tb_users ON tb_scores.user_id = tb_users.user_id
+      WHERE tb_users.username = $1
+      ORDER BY tb_scores.score DESC`;
+    const scoresResult = await client.query(query, values);
+
+    query = `
+    SELECT
+      SUM(hits) AS total_hits,
+      MAX(hits) AS highest_hits,
+      ROUND(AVG(accuracy), 2) AS average_acc,
+      SUM(score) AS total_score
+    FROM tb_scores
+    JOIN tb_users ON tb_scores.user_id = tb_users.user_id
+    WHERE tb_users.username = $1`;
+    const statsResult = await client.query(query, values);
+
+    query = `
+      SELECT user_rank
+      FROM (
+        SELECT user_id, username, RANK() OVER (ORDER BY COALESCE(total_score, -999999) DESC, created_at ASC) AS user_rank
+        FROM (
+          SELECT u.user_id, u.username, SUM(s.score) AS total_score, u.created_at
+          FROM tb_users u
+          LEFT JOIN tb_scores s ON u.user_id = s.user_id
+          GROUP BY u.user_id, u.username, u.created_at
+        ) AS user_scores
+      ) AS ranked_users
+      WHERE username = $1`;
+    const rankResult = await client.query(query, values);
+
+    const response = {
+      user: userResult.rows[0],
+      scores: scoresResult.rows,
+      stats: statsResult.rows[0],
+      rank: rankResult.rows[0],
+    };
+
+    client.release();
+    res.json(response);
+  } catch (err) {
+    console.error('Error fetching user', err);
+    res.status(500).json({ error: 'Error fetching user' });
+  }
+});
 
 export default app;

@@ -7,7 +7,7 @@ import LoadingSpinner from '../components/loaders/LoadingSpinner';
 
 const Profile = () => {
   const { username } = useParams<{ username: string }>();
-  const { status, data: user } = useQuery({
+  const { status, data } = useQuery({
     queryKey: ['users', username as string],
     queryFn: () => getUserByUsername(username as string),
   });
@@ -16,7 +16,7 @@ const Profile = () => {
     return <LoadingSpinner />;
   }
 
-  if (!user) {
+  if (!data.user) {
     return (
       <div className='max-w-5xl mx-auto bg-neutral-800 px-4 py-8'>
         User Not Found
@@ -26,7 +26,7 @@ const Profile = () => {
 
   return (
     <div className='container mx-auto'>
-      <ProfilePage data={user} />
+      <ProfilePage data={data} />
     </div>
   );
 };
