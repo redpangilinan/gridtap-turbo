@@ -217,7 +217,7 @@ app.put(
           httpOnly: true,
           domain:
             process.env.NODE_ENV === 'production'
-              ? process.env.DOMAIN
+              ? process.env.COOKIE_DOMAIN
               : undefined,
         })
         .cookie('refreshToken', refreshToken, {
@@ -226,7 +226,7 @@ app.put(
           httpOnly: true,
           domain:
             process.env.NODE_ENV === 'production'
-              ? process.env.DOMAIN
+              ? process.env.COOKIE_DOMAIN
               : undefined,
         })
         .json({ accessToken: accessToken, refreshToken: refreshToken });
