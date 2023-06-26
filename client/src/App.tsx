@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getUserTokens, refreshUserTokens } from './api/users';
 import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -47,6 +48,7 @@ const App = () => {
           element={<Settings auth={token} refreshToken={refreshToken} />}
         />
       </Routes>
+      <Footer />
     </div>
   );
 };

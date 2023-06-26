@@ -13,19 +13,25 @@ const Profile = () => {
   });
 
   if (status === 'loading') {
-    return <LoadingSpinner />;
+    return (
+      <div className='flex-grow container mx-auto text-center'>
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   if (!data.user) {
     return (
-      <div className='max-w-5xl mx-auto bg-neutral-800 px-4 py-8'>
-        User Not Found
+      <div className='flex-grow container mx-auto pt-6'>
+        <div className='max-w-xs mx-auto bg-neutral-800 px-4 py-8 text-center rounded-md text-lg'>
+          User Not Found
+        </div>
       </div>
     );
   }
 
   return (
-    <div className='container mx-auto'>
+    <div className='flex-grow container mx-auto'>
       <ProfilePage data={data} />
     </div>
   );

@@ -117,7 +117,7 @@ const Settings: React.FC<TokenData> = ({ auth, refreshToken }) => {
   }
 
   return (
-    <>
+    <div className='flex-grow container mx-auto'>
       <div className='flex flex-col items-center'>
         <form
           onSubmit={handleSubmit(onSubmitInfo)}
@@ -272,7 +272,7 @@ const Settings: React.FC<TokenData> = ({ auth, refreshToken }) => {
           </div>
         </form>
       </div>
-    </>
+    </div>
   );
 };
 

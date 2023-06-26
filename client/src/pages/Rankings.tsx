@@ -28,7 +28,7 @@ const Rankings = () => {
   };
 
   return (
-    <div className='flex-grow container mx-auto px-2 pb-6'>
+    <div className='flex-grow container mx-auto px-2'>
       {status === 'loading' ? (
         <LoadingTable />
       ) : status === 'error' ? (

@@ -189,47 +189,49 @@ const Game: React.FC<tokenData> = ({ auth, refreshToken }) => {
   };
 
   return (
-    <div className='p-4 flex justify-center'>
-      <div className='flex flex-col max-w-lg bg-gray-100 border text-gray-800 select-none'>
-        <ScoreBar
+    <div className='flex-grow container mx-auto'>
+      <div className='flex justify-center'>
+        <div className='flex flex-col max-w-lg bg-gray-100 border text-gray-800 select-none'>
+          <ScoreBar
+            score={score}
+            accuracy={accuracy}
+            combo={combo}
+            maxCombo={maxCombo}
+            hits={hits}
+            miss={miss}
+            multiplier={multiplier}
+          />
+          <div className='grid grid-cols-4'>
+            {Array.from(Array(16), (_, index) => (
+              <Tiles
+                key={index}
+                device={device}
+                isBlack={blackSquareIndices.includes(index)}
+                isSelected={selectedIndices.includes(index)}
+                onClick={() => handleSquareClick(index)}
+              />
+            ))}
+          </div>
+          <div className='p-2 text-center text-lg'>
+            {gameStart ? (
+              <div>Timer: {timer} sec</div>
+            ) : (
+              <div>Tap a black tile to start</div>
+            )}
+          </div>
+        </div>
+        <ScoreModal
+          isOpen={modalOpen}
+          onClose={closeModal}
           score={score}
           accuracy={accuracy}
-          combo={combo}
           maxCombo={maxCombo}
           hits={hits}
           miss={miss}
-          multiplier={multiplier}
+          message={status === 'loading' ? 'Submitting...' : message}
+          onMutate={mutate}
         />
-        <div className='grid grid-cols-4'>
-          {Array.from(Array(16), (_, index) => (
-            <Tiles
-              key={index}
-              device={device}
-              isBlack={blackSquareIndices.includes(index)}
-              isSelected={selectedIndices.includes(index)}
-              onClick={() => handleSquareClick(index)}
-            />
-          ))}
-        </div>
-        <div className='p-2 text-center text-lg'>
-          {gameStart ? (
-            <div>Timer: {timer} sec</div>
-          ) : (
-            <div>Tap a black tile to start</div>
-          )}
-        </div>
       </div>
-      <ScoreModal
-        isOpen={modalOpen}
-        onClose={closeModal}
-        score={score}
-        accuracy={accuracy}
-        maxCombo={maxCombo}
-        hits={hits}
-        miss={miss}
-        message={status === 'loading' ? 'Submitting...' : message}
-        onMutate={mutate}
-      />
     </div>
   );
 };
