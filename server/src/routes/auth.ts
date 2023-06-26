@@ -161,9 +161,25 @@ app.post('/login', async (req, res) => {
 
 // Logout by clearing token cookies
 app.delete('/logout', async (req: Request, res: Response) => {
-  res.clearCookie('accessToken');
-  res.clearCookie('refreshToken');
-  res.sendStatus(200);
+  res
+    .status(200)
+    .cookie('accessToken', '', {
+      expires: new Date(0),
+      path: '/',
+      domain:
+        process.env.NODE_ENV === 'production'
+          ? process.env.COOKIE_DOMAIN
+          : undefined,
+    })
+    .cookie('refreshToken', '', {
+      expires: new Date(0),
+      path: '/',
+      domain:
+        process.env.NODE_ENV === 'production'
+          ? process.env.COOKIE_DOMAIN
+          : undefined,
+    })
+    .json({ message: 'Cookies cleared' });
 });
 
 export default app;
