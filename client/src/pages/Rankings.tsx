@@ -37,14 +37,14 @@ const Rankings = () => {
         <>
           <Pagination
             currentPage={page}
-            totalPages={data.pagination.totalPages}
+            totalPages={data.pagination.totalPages || 0}
             maxPageNumbers={3}
             onPageChange={handlePageChange}
           />
           <RankTable data={data || []} />
           <Pagination
             currentPage={page}
-            totalPages={data.pagination.totalPages}
+            totalPages={data.pagination.totalPages || 0}
             maxPageNumbers={3}
             onPageChange={handlePageChange}
           />
