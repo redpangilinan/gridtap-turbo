@@ -68,7 +68,7 @@ app.get('/refresh', async (req: Request, res: Response) => {
         .cookie('accessToken', accessToken, {
           sameSite: 'strict',
           path: '/',
-          expires: new Date(new Date().getTime() + 60 * 60 * 1000),
+          expires: new Date(new Date().getTime() + 15 * 60 * 1000),
           httpOnly: true,
           domain:
             process.env.NODE_ENV === 'production'
@@ -136,7 +136,7 @@ app.post('/login', async (req, res) => {
       .cookie('accessToken', accessToken, {
         sameSite: 'strict',
         path: '/',
-        expires: new Date(new Date().getTime() + 60 * 60 * 1000),
+        expires: new Date(new Date().getTime() + 15 * 60 * 1000),
         httpOnly: true,
         domain:
           process.env.NODE_ENV === 'production'
