@@ -134,17 +134,21 @@ app.post('/login', async (req, res) => {
     res
       .status(200)
       .cookie('accessToken', accessToken, {
-        sameSite: 'strict',
         path: '/',
         expires: new Date(new Date().getTime() + 60 * 60 * 1000),
         httpOnly: true,
-        domain: process.env.DOMAIN,
+        domain:
+          process.env.NODE_ENV === 'production'
+            ? process.env.DOMAIN
+            : undefined,
       })
       .cookie('refreshToken', refreshToken, {
-        sameSite: 'strict',
         path: '/',
         httpOnly: true,
-        domain: process.env.DOMAIN,
+        domain:
+          process.env.NODE_ENV === 'production'
+            ? process.env.DOMAIN
+            : undefined,
       })
       .json({ accessToken: accessToken, refreshToken: refreshToken });
   } catch (err) {
