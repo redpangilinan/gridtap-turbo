@@ -3,15 +3,19 @@
 
  Tap fast and climb the leaderboards in GridTap Turbo, a fast-paced grid-tapping challenge.
 
+## Showcase
+![Gridtap Turbo Showcase](public/gridtap-showcase.gif)
+
  ## Features
  - Fast-paced gameplay
  - User-friendly interface
+ - User profile and stats
  - Global rankings / Leaderboard
- - Responsive and Cross-Platform
+ - Responsive and cross-platform
 
 ## Installation
 
-To run this application, follow these steps:
+To run this application locally, follow these steps:
 
 1.  Clone the repository to your local machine.
 2.  Navigate to client folder: `cd client`
