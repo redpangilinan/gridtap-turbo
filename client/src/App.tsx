@@ -19,15 +19,15 @@ const App = () => {
     onError: async () => {
       try {
         await refreshUserTokens();
-        refetch();
+        await refetch();
       } catch (error) {
         console.error('Failed to refresh tokens:', error);
       }
     },
   });
 
-  const refreshToken = () => {
-    refetch();
+  const refreshToken = async () => {
+    await refetch();
   };
 
   return (

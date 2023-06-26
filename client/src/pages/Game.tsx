@@ -56,14 +56,14 @@ const Game: React.FC<tokenData> = ({ auth, refreshToken }) => {
     onSuccess: () => {
       setMessage('Submitted at ' + new Date().toLocaleDateString());
     },
-    onError: (error: AxiosError) => {
+    onError: async (error: AxiosError) => {
       setMessage('Login to submit scores!');
       if (error.response?.status === 403) {
         setMessage('Your account is restricted!');
       }
       if (auth && error.response?.status != 403) {
-        refreshToken();
-        mutate();
+        await refreshToken();
+        await mutate();
       }
     },
   });
