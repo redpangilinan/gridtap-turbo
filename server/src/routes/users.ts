@@ -356,6 +356,7 @@ app.get('/:username', async (req: Request, res: Response) => {
           SELECT u.user_id, u.username, SUM(s.score) AS total_score, u.created_at
           FROM tb_users u
           LEFT JOIN tb_scores s ON u.user_id = s.user_id
+          WHERE u.user_status != 'restricted'
           GROUP BY u.user_id, u.username, u.created_at
         ) AS user_scores
       ) AS ranked_users
