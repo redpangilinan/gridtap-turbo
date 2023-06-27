@@ -67,11 +67,11 @@ const Settings: React.FC<TokenData> = ({ auth, refreshToken }) => {
     onError: async (error: AxiosError) => {
       if (error.response?.status === 500) {
         setMessage('Username or email is already taken!');
-      } else {
-        if (auth) {
-          await refreshToken();
-          await updateInfo.mutate();
-        }
+      } else if (error.response?.status === 401) {
+        setMessage('Something went wrong, try again later.');
+      } else if (auth) {
+        await refreshToken();
+        await updateInfo.mutate();
       }
     },
   });
@@ -85,11 +85,11 @@ const Settings: React.FC<TokenData> = ({ auth, refreshToken }) => {
     onError: async (error: AxiosError) => {
       if (error.response?.status === 500) {
         setMessagePass('Your password is incorrect!');
-      } else {
-        if (auth) {
-          await refreshToken();
-          await updatePass.mutate();
-        }
+      } else if (error.response?.status === 401) {
+        setMessage('Something went wrong, try again later.');
+      } else if (auth) {
+        await refreshToken();
+        await updatePass.mutate();
       }
     },
   });

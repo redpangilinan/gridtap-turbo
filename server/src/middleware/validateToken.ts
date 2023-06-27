@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 config();
 
 // Validate JWT token
-function validateToken(userType) {
+const validateToken = (userType) => {
   return function (req, res, next) {
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -28,6 +28,6 @@ function validateToken(userType) {
       res.status(401).json({ error: 'Token not provided' });
     }
   };
-}
+};
 
 export default validateToken;

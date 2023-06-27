@@ -83,11 +83,12 @@ const Modal: React.FC<ScoreProps> = ({
           </div>
           <div className='overflow-hidden'>
             {message}{' '}
-            {message === 'Login to submit scores!' && (
-              <button onClick={handleMutate} className='text-blue-300'>
-                Re-submit score
-              </button>
-            )}
+            {message === 'Login to submit scores!' ||
+              (message === 'Score submission failed!' && (
+                <button onClick={handleMutate} className='text-blue-300'>
+                  Re-submit score
+                </button>
+              ))}
           </div>
         </div>
       </div>

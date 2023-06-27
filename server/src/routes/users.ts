@@ -3,6 +3,7 @@ import cors from 'cors';
 import { pool } from '../db';
 import bcrypt from 'bcrypt';
 import validateToken from '../middleware/validateToken';
+import validateId from '../middleware/validateId';
 import cookieParser from 'cookie-parser';
 import jwt from 'jsonwebtoken';
 
@@ -118,12 +119,12 @@ app.get('/', async (req: Request, res: Response) => {
 });
 
 // Fetch user data by ID to display for settings
-app.get('/settings/:id', async (req: Request, res: Response) => {
+app.get('/settings/:userId', async (req: Request, res: Response) => {
   try {
     const client = await pool.connect();
 
-    const { id } = req.params;
-    const values = [id];
+    const { userId } = req.params;
+    const values = [userId];
 
     let query = `SELECT username, email FROM tb_users WHERE user_id = $1 AND user_status = 'active'`;
     const result = await client.query(query, values);
@@ -138,21 +139,22 @@ app.get('/settings/:id', async (req: Request, res: Response) => {
 
 // Update user info by ID
 app.put(
-  '/:section/:id',
+  '/:section/:userId',
   validateToken('any'),
+  validateId,
   async (req: Request, res: Response) => {
     try {
       const client = await pool.connect();
 
-      const { section, id } = req.params;
+      const { section, userId } = req.params;
       const { username, email, oldPassword, password } = req.body;
 
       let query = `UPDATE tb_users SET username = $1, email = $2 WHERE user_id = $3 RETURNING *`;
-      let values = [username, email, id];
+      let values = [username, email, userId];
       if (section === 'password') {
         // Fetch the user's current password
         const fetchQuery = `SELECT password FROM tb_users WHERE user_id = $1`;
-        const fetchResult = await pool.query(fetchQuery, [id]);
+        const fetchResult = await pool.query(fetchQuery, [userId]);
 
         if (fetchResult.rows.length === 0) {
           client.release();
@@ -176,13 +178,13 @@ app.put(
             .json({ error: 'Password should be at least 6 characters long' });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        values = [hashedPassword, id];
+        values = [hashedPassword, userId];
       }
 
       let result = await client.query(query, values);
 
       query = `SELECT * FROM tb_users WHERE user_id = $1 AND user_status = 'active'`;
-      result = await client.query(query, [id]);
+      result = await client.query(query, [userId]);
       const user = result.rows[0];
 
       client.release();

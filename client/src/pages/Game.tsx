@@ -60,10 +60,9 @@ const Game: React.FC<tokenData> = ({ auth, refreshToken }) => {
       setMessage('Login to submit scores!');
       if (error.response?.status === 403) {
         setMessage('Your account is restricted!');
-      }
-      if (auth && error.response?.status != 403) {
+      } else if (error.response?.status === 401) {
         await refreshToken();
-        await mutate();
+        setMessage('Score submission failed!');
       }
     },
   });
