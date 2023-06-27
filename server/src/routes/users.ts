@@ -282,7 +282,11 @@ app.get('/stats', async (req: Request, res: Response) => {
       AND user_status = 'active'`;
     const activeResult = await client.query(query);
 
-    query = `SELECT MAX(score) AS top_score from tb_scores`;
+    query = `
+      SELECT MAX(score) AS top_score
+      FROM tb_scores
+      WHERE user_id
+      NOT IN (SELECT user_id FROM tb_users WHERE user_status = 'restricted')`;
     const scoreResult = await client.query(query);
 
     const response = {
