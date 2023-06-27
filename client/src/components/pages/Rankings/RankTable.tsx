@@ -50,12 +50,12 @@ const RankTable: React.FC<RankTableProps> = ({ data }) => {
           </tr>
         </thead>
         <tbody className='bg-neutral-800 divide-y divide-neutral-700'>
-          {data.data.map((user, index) => (
+          {data.data.map((user) => (
             <tr
               key={user.user_id}
               className=' border-b bg-neutral-800 border-neutral-700 hover:bg-neutral-600'
             >
-              <td className='px-6 py-4'>{index + 1}</td>
+              <td className='px-6 py-4'>{user.user_rank}</td>
               <td className='px-6 py-4 font-medium whitespace-nowrap text-white'>
                 <Link
                   to={`/user/${user.username}`}
