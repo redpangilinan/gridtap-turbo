@@ -30,7 +30,7 @@ app.post(
       const countResult = await client.query(query, [userId]);
       const scoreCount = countResult.rows[0].score_count;
 
-      if (score >= 2000) {
+      if (score >= 1400) {
         query = `UPDATE tb_users SET user_status = 'restricted' WHERE user_id = $1`;
         await client.query(query, [userId]);
       }
