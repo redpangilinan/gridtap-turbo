@@ -112,6 +112,18 @@ const Settings: React.FC<TokenData> = ({ auth, refreshToken }) => {
     return true;
   };
 
+  // Validate username for both whitespace and special characters
+  const validateUsername = (value: string) => {
+    const regex = /^[a-zA-Z0-9\s]*$/;
+    if (value.trim() !== value) {
+      return 'Whitespace at the beginning or end is not allowed';
+    }
+    if (!regex.test(value)) {
+      return 'Username must not contain special characters';
+    }
+    return true;
+  };
+
   if (!auth) {
     navigate('/login');
   }
@@ -144,7 +156,7 @@ const Settings: React.FC<TokenData> = ({ auth, refreshToken }) => {
                   value: 30,
                   message: 'Username must not be longer than 30 characters',
                 },
-                validate: validateWhitespace,
+                validate: validateUsername,
               })}
               className='w-full p-2 md:p-3 text-sm bg-neutral-50 focus:outline-none border border-neutral-200 rounded text-neutral-600'
               type='text'
