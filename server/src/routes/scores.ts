@@ -26,8 +26,7 @@ app.post(
       const { score, accuracy, maxCombo, hits, miss, device, userId } =
         req.body;
 
-      let query = `
-    SELECT COUNT(*) AS score_count FROM tb_scores WHERE user_id = $1`;
+      let query = `SELECT COUNT(*) AS score_count FROM tb_scores WHERE user_id = $1`;
       const countResult = await client.query(query, [userId]);
       const scoreCount = countResult.rows[0].score_count;
 
@@ -47,20 +46,18 @@ app.post(
       await client.query(query, [userId]);
 
       query = `
-    INSERT INTO tb_scores (user_id, score, accuracy, max_combo, hits, miss, device)
-    VALUES ($1, $2, $3, $4, $5, $6, $7)
-    RETURNING *`;
+        INSERT INTO tb_scores (user_id, score, accuracy, max_combo, hits, miss, device)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING *`;
       const values = [userId, score, accuracy, maxCombo, hits, miss, device];
       const insertResult = await client.query(query, values);
 
-      query = `
-    SELECT score_id FROM tb_scores WHERE user_id = $1 ORDER BY score, submitted_at ASC LIMIT 1`;
+      query = `SELECT score_id FROM tb_scores WHERE user_id = $1 ORDER BY score, submitted_at ASC LIMIT 1`;
       const lowestScoreResult = await client.query(query, [userId]);
       const lowestScoreId = lowestScoreResult.rows[0].score_id;
 
       if (scoreCount >= 10) {
-        query = `
-      DELETE FROM tb_scores WHERE user_id = $1 AND score_id = $2`;
+        query = `DELETE FROM tb_scores WHERE user_id = $1 AND score_id = $2`;
         await client.query(query, [userId, lowestScoreId]);
       }
 
