@@ -74,8 +74,11 @@ const Game: React.FC<tokenData> = ({ auth, refreshToken }) => {
 
   const closeModal = () => {
     setModalOpen(false);
+    restartGame();
+  };
 
-    // Restart game
+  const restartGame = () => {
+    setGameStart(false);
     setScore(0);
     setHits(0);
     setMiss(0);
@@ -217,6 +220,13 @@ const Game: React.FC<tokenData> = ({ auth, refreshToken }) => {
             ) : (
               <div>Tap a black tile to start</div>
             )}
+            <button
+              type='button'
+              className='text-neutral-900 hover:text-white border border-neutral-800 hover:bg-neutral-900 focus:ring-4 focus:outline-none focus:ring-neutral-300 font-medium rounded-lg text-sm px-5 py-1.5 text-center'
+              onClick={restartGame}
+            >
+              Restart
+            </button>
           </div>
         </div>
         <ScoreModal
