@@ -30,9 +30,10 @@ app.post(
       const countResult = await client.query(query, [userId]);
       const scoreCount = countResult.rows[0].score_count;
 
-      if (score >= 1400) {
+      if (score >= 1400 || score < 0) {
         query = `UPDATE tb_users SET user_status = 'restricted' WHERE user_id = $1`;
         await client.query(query, [userId]);
+        console.log(`User ID ${userId} has been auto restricted.`);
       }
 
       query = `SELECT user_status FROM tb_users WHERE user_id = $1`;
