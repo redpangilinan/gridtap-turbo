@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 // Rate limit middleware
 const limiter = rateLimit({
   windowMs: 1000,
-  max: 5,
+  max: 7,
   message: 'Too many requests, please try again later.',
 });
 

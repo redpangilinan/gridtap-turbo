@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { login, signup } from '../api/authentication';
 import ErrorMessage from '../components/common/ErrorMessage';
 
@@ -28,6 +29,8 @@ const Register: React.FC<tokenData> = ({ auth }) => {
   } = useForm<Inputs>();
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const [recaptchaError, setRecaptchaError] = useState('');
 
   if (auth) {
     navigate('/');
@@ -60,7 +63,26 @@ const Register: React.FC<tokenData> = ({ auth }) => {
   });
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    createUser.mutate(data);
+    try {
+      const recaptchaToken = await recaptchaRef.current?.getValue();
+
+      if (!recaptchaToken) {
+        setRecaptchaError('Please complete the reCAPTCHA verification.');
+        return;
+      }
+
+      recaptchaRef.current?.reset();
+      setRecaptchaError('');
+
+      const payload = {
+        ...data,
+        recaptchaToken,
+      };
+
+      createUser.mutate(payload);
+    } catch (error) {
+      console.error('Error creating a new user', error);
+    }
   };
 
   // Validate white spaces
@@ -185,6 +207,18 @@ const Register: React.FC<tokenData> = ({ auth }) => {
             {errors.confirmPassword && (
               <span className='text-red-400' role='alert'>
                 {errors.confirmPassword.message}
+              </span>
+            )}
+          </div>
+          <div className='pb-2'>
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              sitekey={import.meta.env.VITE_RECAPTCHA_KEY}
+              onChange={() => setRecaptchaError('')}
+            />
+            {recaptchaError && (
+              <span className='text-red-400' role='alert'>
+                {recaptchaError}
               </span>
             )}
           </div>

@@ -6,6 +6,7 @@ import validateToken from '../middleware/validateToken';
 import validateId from '../middleware/validateId';
 import cookieParser from 'cookie-parser';
 import jwt from 'jsonwebtoken';
+import axios from 'axios';
 
 const app = express.Router();
 
@@ -19,7 +20,26 @@ app.post('/', async (req: Request, res: Response) => {
   try {
     const client = await pool.connect();
 
-    const { username, password, email, user_type } = req.body;
+    const { username, password, email, user_type, recaptchaToken } = req.body;
+
+    // Verify reCAPTCHA token
+    const response = await axios.post(
+      'https://www.google.com/recaptcha/api/siteverify',
+      null,
+      {
+        params: {
+          secret: process.env.RECAPTCHA_SECRET_KEY,
+          response: recaptchaToken,
+        },
+      }
+    );
+
+    const { success, score } = response.data;
+
+    if (!success || score < 0.5) {
+      console.error('Invalid reCAPTCHA response');
+      return res.status(400).json({ error: 'Invalid reCAPTCHA response' });
+    }
 
     if (password.length < 6) {
       return res
